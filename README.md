@@ -7,6 +7,7 @@
 [Compiler](#compiler) <br/>
 [TS with ES6](#es6) <br/>
 [Classes](#classes) <br/>
+[Namespaces and modules](#namespaces) <br/>
 
 ## intro
 
@@ -93,5 +94,56 @@ const testing = (name: string = "Max"): void => {
 ## classes
 
 Look at file 2-Classes
+
+[TOP](#content)
+
+## namespaces
+
+**_ Namespaces _**
+
+```javascript
+namespace MyMath {
+  const PI = 3.14;
+
+  export const calculateCircum = (diameter: number): number => {
+    return diameter * PI;
+  };
+}
+
+MyMath.calculateRectangle(10, 20)
+
+// TO import use :
+/// <reference path="./circleMath.ts" />
+/// <reference path="./rectangleMath.ts" />
+```
+
+NOTE! Use modules instead of namespaces
+
+**_ Modules _**
+
+```console
+npm install --save systemjs@0.21.5
+```
+
+```javascript
+// in index.html
+<script src="node_modules/systemjs/dist/system.js"></script>
+<script>
+    SystemJS.config({
+        baseURL: "/js",
+        // defaultJSExtension: true,
+        packages: {
+          "/": {
+            defaultExtension: "js"
+          }
+        }
+    });
+    SystemJS.import("script.js");
+</script>
+
+// Now can use:
+export { calculateRectangle };
+import { calculateRectangle } from "./Math/rectangle";
+```
 
 [TOP](#content)
