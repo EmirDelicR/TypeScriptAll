@@ -10,6 +10,7 @@
 [Namespaces and modules](#namespaces) <br/>
 [Interfaces](#interfaces) <br/>
 [Generic](#generic) <br/>
+[Decorators](#decorators) <br/>
 
 ## intro
 
@@ -167,5 +168,35 @@ const echo = <T>(data: T): T => {
 ```
 
 Look file _5-Generic_
+
+[TOP](#content)
+
+## decorators
+
+In tsconfig.json
+
+```javascript
+"experimentalDecorators": true
+```
+
+```javascript
+/**
+ * Decorator is simple function that can be attached to something
+ *
+ */
+const logged = (constructorFn: Function) => {
+  console.log(constructorFn);
+};
+
+/** Decorator attached to class */
+@logged
+class Person {
+  constructor() {
+    console.log("HI");
+  }
+}
+```
+
+Look file _6-Decorators_
 
 [TOP](#content)
