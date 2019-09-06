@@ -8,6 +8,8 @@
 [TS with ES6](#es6) <br/>
 [Classes](#classes) <br/>
 [Namespaces and modules](#namespaces) <br/>
+[Interfaces](#interfaces) <br/>
+[Generic](#generic) <br/>
 
 ## intro
 
@@ -93,7 +95,7 @@ const testing = (name: string = "Max"): void => {
 
 ## classes
 
-Look at file 2-Classes
+Look at file _2-Classes_
 
 [TOP](#content)
 
@@ -145,5 +147,25 @@ npm install --save systemjs@0.21.5
 export { calculateRectangle };
 import { calculateRectangle } from "./Math/rectangle";
 ```
+
+[TOP](#content)
+
+## interfaces
+
+Look file _5-Interfaces_
+
+[TOP](#content)
+
+## generic
+
+To use generic add Type of T like
+
+```javascript
+const echo = <T>(data: T): T => {
+  return data;
+};
+```
+
+Look file _5-Generic_
 
 [TOP](#content)
