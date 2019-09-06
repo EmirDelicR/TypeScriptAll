@@ -1,0 +1,16 @@
+{
+  "name": "7-gulpwebpack",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "gulp"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-typescript": "^5.0.1",
+    "typescript": "^3.6.2"
+  }
+}

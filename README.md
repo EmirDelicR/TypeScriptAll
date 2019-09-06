@@ -11,6 +11,8 @@
 [Interfaces](#interfaces) <br/>
 [Generic](#generic) <br/>
 [Decorators](#decorators) <br/>
+[Library](#library) <br/>
+[Workflow](#workflow) <br/>
 
 ## intro
 
@@ -198,5 +200,93 @@ class Person {
 ```
 
 Look file _6-Decorators_
+
+[TOP](#content)
+
+## library
+
+```javascript
+npm install @types/nameOfLibrary --save-dev
+```
+
+[TOP](#content)
+
+## workflow
+
+_Gulp_
+
+[Gulp typescript](https://www.npmjs.com/package/gulp-typescript)
+
+```console
+npm install --save-dev gulp gulp-typescript typescript
+```
+
+```javascript
+// Create an file gulpfile.js
+let gulp = require("gulp");
+let ts = require("gulp-typescript");
+
+let tsProject = ts.createProject("tsconfig.json");
+
+gulp.task("typescript", () =>
+  tsProject
+    .src()
+    .pipe(tsProject()))
+    .pipe(gulp.dest("./js"))
+);
+
+// Create an watcher (replace tsc -w)
+gulp.task("watch", () => {
+  gulp.watch("*.ts", gulp.series("typescript"));
+});
+
+gulp.task("default", gulp.series("watch"));
+
+// In package.json add
+"scripts": {
+  "build": "gulp"
+},
+
+```
+
+```console
+npm run build
+```
+
+_Webpack_
+
+```console
+npm install webpack webpack-cli typescript ts-loader --save-dev
+```
+
+```javascript
+// Remove from tsconfig.json file
+"module": "commonjs",
+
+// create webpack.config.js file
+module.exports = {
+  entry: "./app.ts",
+  output: {
+    filename: "./bundle.js"
+  },
+  devtool: "source-map",
+  resolve: {
+    extensions: ["*", ".ts", ".tsx", ".js"]
+  },
+  module: {
+    rules: [{ test: /\.tsx?$/, loader: "ts-loader" }]
+  }
+};
+
+// Add this to package.json
+"scripts": {
+  "build": "webpack -d --watch",
+  "build:prod": "webpack -p"
+},
+```
+
+```console
+npm run build
+```
 
 [TOP](#content)
