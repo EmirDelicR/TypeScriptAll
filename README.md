@@ -13,6 +13,8 @@
 [Decorators](#decorators) <br/>
 [Library](#library) <br/>
 [Workflow](#workflow) <br/>
+[Ts with React](#react)<br/>
+[Ts with Vue](#vue)<br/>
 
 ## intro
 
@@ -288,5 +290,41 @@ module.exports = {
 ```console
 npm run build
 ```
+
+[TOP](#content)
+
+## react
+
+[React docks](https://reactjs.org/docs/create-a-new-react-app.html)
+
+[create-react-app](https://github.com/facebook/create-react-app)
+
+```console
+sudo npm install -g create-react-app
+```
+
+Create react app with typescript
+
+```console
+npx create-react-app my-app --typescript
+```
+
+[TOP](#content)
+
+## vue
+
+Instal vue-cli
+
+```console
+npm install --global @vue/cli
+```
+
+Create vue app
+
+```console
+vue create my-project-name
+```
+
+Choose manually options and pick Typescript and that is all
 
 [TOP](#content)
