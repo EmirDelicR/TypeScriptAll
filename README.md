@@ -15,6 +15,7 @@
 [Workflow](#workflow) <br/>
 [Ts with React](#react)<br/>
 [Ts with Vue](#vue)<br/>
+[Projects](#projects)<br/>
 
 ## intro
 
@@ -326,5 +327,55 @@ vue create my-project-name
 ```
 
 Choose manually options and pick Typescript and that is all
+
+[TOP](#content)
+
+## projects
+
+#### TS Calculator
+
+Calculator using TypeScript, gulp, sass
+
+Setup
+
+```console
+npm init -y
+```
+
+Instal gulp-cli
+
+```console
+sudo npm install -g gulp-cli
+
+# Instal typeScript and dependency for gulp
+
+npm install --save-dev typescript gulp gulp-typescript gulp-sourcemaps gulp-sass browser-sync
+
+# Create TypeScript tsconfig.json file
+
+tsc --init
+```
+
+```javascript
+/* package.json */
+
+"scripts": {
+  "start": "gulp"
+},
+  "devDependencies": {
+  "browser-sync": "^2.23.6",
+  "gulp": "^3.9.1",
+  "gulp-sass": "^3.1.0",
+  "gulp-sourcemaps": "^2.6.4",
+  "gulp-typescript": "^4.0.1",
+  "typescript": "^2.7.2"
+},
+```
+
+Look gulpfile.js setup
+
+```console
+npm run start
+```
 
 [TOP](#content)
