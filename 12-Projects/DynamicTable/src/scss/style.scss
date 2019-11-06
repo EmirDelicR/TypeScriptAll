@@ -1,0 +1,16 @@
+$body-bg: #ffffff;
+
+body {
+  background: $body-bg;
+  .error {
+    display: "block";
+  }
+
+  .readonly {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    pointer-events: none;
+  }
+}
