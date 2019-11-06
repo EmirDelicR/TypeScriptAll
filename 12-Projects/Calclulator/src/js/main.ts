@@ -141,24 +141,34 @@ class Calculator implements CalculatorInterface {
   }
 
   private validateInput() {
-    let previousNum = this.buttonsInnerValue[0];
-    if (previousNum.match(/^\d+$/)) {
-      for (let i = 1; i < this.buttonsInnerValue.length; i++) {
-        if (
-          previousNum.match(/[-\/*+.|[\]]/g) &&
-          this.buttonsInnerValue[i].match(/[-\/*+.|[\]]/g)
-        ) {
-          return false;
-        }
-        previousNum = this.buttonsInnerValue[i];
-      }
-      return true;
+    let lastChar = this.buttonsInnerValue[this.buttonsInnerValue.length - 1];
+
+    if (!lastChar) {
+      return null;
     }
-    return false;
+
+    if (!lastChar.match(/^\d+$/)) {
+      return false;
+    }
+
+    for (let i = 1; i < this.buttonsInnerValue.length; i++) {
+      if (
+        this.buttonsInnerValue[i].match(/[-\/*+.|[\]]/g) &&
+        this.buttonsInnerValue[i - 1].match(/[-\/*+.|[\]]/g)
+      ) {
+        return false;
+      }
+    }
+    return true;
   }
 
   private calculateResult() {
     let check = this.validateInput();
+
+    if (check === null) {
+      this.clear();
+      return;
+    }
 
     if (check) {
       let result = eval(this.buttonsInnerValue.join(""));
@@ -166,6 +176,7 @@ class Calculator implements CalculatorInterface {
       this.display.classList.remove("error");
       return;
     }
+
     this.display.classList.add("error");
   }
 

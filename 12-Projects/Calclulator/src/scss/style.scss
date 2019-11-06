@@ -1,7 +1,7 @@
-$body-bg: #7e8f7c;
-$container-bg: #64b5f6;
+$body-bg: #ffffff;
+$container-bg: #ffffff;
 $calc-bg: #1976d2;
-$display-bg-on: #bccd95;
+$display-bg-on: #f7fa62;
 $display-bg-off: #cdcdcd;
 
 body {
@@ -9,16 +9,16 @@ body {
 
   .container {
     margin: auto;
-    margin-top: 200px;
+    margin-top: 100px;
     background: $container-bg;
-    width: 50%;
-    height: 400px;
+    width: 80%;
+    height: 500px;
     vertical-align: center;
     padding-top: 50px;
 
     .calc {
       background: $calc-bg;
-      width: 50%;
+      width: 340px;
       height: 350px;
       margin: auto;
 

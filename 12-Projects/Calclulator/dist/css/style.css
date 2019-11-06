@@ -1,16 +1,16 @@
 body {
-  background: #7e8f7c; }
+  background: #ffffff; }
   body .container {
     margin: auto;
-    margin-top: 200px;
-    background: #64b5f6;
-    width: 50%;
-    height: 400px;
+    margin-top: 100px;
+    background: #ffffff;
+    width: 80%;
+    height: 500px;
     vertical-align: center;
     padding-top: 50px; }
     body .container .calc {
       background: #1976d2;
-      width: 50%;
+      width: 340px;
       height: 350px;
       margin: auto; }
       body .container .calc .calc-display {
@@ -34,7 +34,7 @@ body {
           height: 40px;
           margin: 6px; }
   body .on {
-    background: #bccd95; }
+    background: #f7fa62; }
   body .off {
     background: #cdcdcd; }
   body .error {
