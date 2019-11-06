@@ -1,0 +1,10 @@
+body {
+  background: #ffffff; }
+  body .error {
+    display: "block"; }
+  body .readonly {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    pointer-events: none; }

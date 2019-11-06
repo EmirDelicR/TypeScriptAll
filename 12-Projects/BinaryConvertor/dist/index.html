@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Calculator</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel='stylesheet' href='http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'></link>
+  </head>
+        
+  <body>
+    <style>
+      .in-er {
+        margin-left: 20px;
+      }
+    </style>
+    
+    <div class="container">
+      <div class="page-header">
+        <h1>Convertor <small>bin, oct, hex </small></h1>
+      </div>
+      <div class="row">
+        <!-- First col -->
+        <div class="col-md-6">
+          <div class="input-group">
+            <span class="input-group-addon in-lab" id="basic-addon1">
+              <button class="btn btn-primary btn-sm generate">Generate number</button>
+            </span>
+            <input 
+              type="number" 
+              id="inOne" 
+              class="form-control in" 
+              placeholder="Input number-1 in decimal like 23"
+              aria-describedby="basic-addon1" />
+            <span class="text-danger in-er" style="display:none">Error: please input number!</span>
+          </div>
+          
+          <br />
+          <div class="input-group">
+            <span class="input-group-addon in-lab" id="basic-addon2">
+              <button class="btn btn-primary btn-sm generate">Generate number</button>
+            </span>
+            <input 
+              type="number" 
+              id="inTwo" 
+              class="form-control in" 
+              placeholder="Input number-2 in decimal like 23"
+              aria-describedby="basic-addon2" />
+            <span class="text-danger in-er" style="display:none">Error: please input number!</span>
+          </div>
+          
+          <br />
+          <div class="input-group">
+            <span class="input-group-btn">
+              <button class="btn btn-primary btn-block convert">Convert</button>
+            </span>
+            <select class="form-control conversionType">
+              <option value="0">Select type...</option>
+              <option value="Binary">Binary</option>
+              <option value="Octave">Octave</option>
+              <option value="Hexadecimal">Hexadecimal</option>
+            </select>
+          </div>
+          <span class="text-danger sel-er" style="display:none">Error: please select type!</span>
+          
+          <br />
+          <div class="input-group">
+            <span class="input-group-btn">
+              <button class="btn btn-primary btn-block convertFunc">Do</button>
+            </span>
+            <select class="form-control conversionFunc">
+              <option value="0">Select function...</option>
+              <option value="Increment">Increment</option>
+              <option value="Decrement">Decrement</option>
+              <option value="Compare">Compare</option>
+              <option value="Add">Adding</option>
+              <option value="Multi">Multiplication</option>
+            </select>
+          </div>
+          <span class="text-danger sel-fun-er" style="display:none">Error: please select type!</span>
+
+        </div>
+        
+        <!-- Second col -->
+        <div class="col-md-6">
+          <div class="see-conversions"> </div>
+          <br />
+          <div class="see-conversions-result"> </div>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript" src="js/main.js"></script>
+  </body>
+</html>
