@@ -42,7 +42,7 @@ class Table implements TableInterface {
     let tableDom = this.buildTableDom();
     this.wrapper.append(tableDom);
     this.initEvents();
-    // this.loggingData();
+    this.loggingData();
   }
   /* Step 3 */
   private buildTableDom(): HTMLElement {
@@ -113,48 +113,44 @@ class Table implements TableInterface {
       cellValue = true;
     }
 
-    let checkBox: any = document.createElement("input");
+    let checkBox: HTMLElement = document.createElement("input");
     checkBox.setAttribute("type", "checkbox");
-    checkBox.id = "test";
+
     if (cellValue) {
       checkBox.setAttribute("checked", "checked");
     }
 
     let checkBoxData = { colIndex: colIndex, rowIndex: rowIndex };
-    checkBox.setAttribute("position", checkBoxData);
-
+    checkBox.dataset.position = JSON.stringify(checkBoxData);
     cellDom.append(checkBox);
+
     return cellDom;
   }
   /* Step 8 */
   private initEvents(): void {
     if (this.wrapper) {
       this.wrapper.addEventListener("change", event => {
-        // event.target
-        // 'input[type="checkbox"]'
-        // https://stackoverflow.com/questions/30880757/javascript-equivalent-to-on
-        // This is refered to this.wrapper
-        let checkBox = document.getElementById("test");
-        let checkBoxData = Object(
-          (<HTMLInputElement>checkBox).getAttribute("position")
-        );
+        if (!event.target) {
+          return;
+        }
+
+        let checkBox = <HTMLInputElement>event.target;
+        const checkBoxData = checkBox.dataset.position;
+
         /* Step 9 */
-        // let checkBoxData = $(this).data("position");
         if (!checkBoxData) {
           return;
         }
 
-        let value = Boolean(
-          (<HTMLInputElement>checkBox).getAttribute("checked")
-        );
-        console.log(value);
-        this.addDataPairByIndex(
-          checkBoxData.rowIndex,
-          checkBoxData.colIndex,
-          value
-        );
-
-        this.draw();
+        const data: { colIndex: number; rowIndex: number } = JSON.parse(
+          checkBoxData
+        ) || {
+          colIndex: -1,
+          rowIndex: -1
+        };
+        let value = checkBox.checked;
+        this.addDataPairByIndex(data.rowIndex, data.colIndex, value);
+        // this.draw();
       });
     }
   }
@@ -195,15 +191,16 @@ class Table implements TableInterface {
   /* Step 12 (For console log data) */
   public loggingData(): void {
     console.log("Data logging: ");
-    console.log("---------------------------------------");
-    console.log("Array x");
-    console.log(this.x);
-    console.log("---------------------------------------");
-    console.log("Array y");
-    console.log(this.y);
-    console.log("---------------------------------------");
+    // console.log("---------------------------------------");
+    // console.log("Array x");
+    // console.log(this.x);
+    // console.log("---------------------------------------");
+    // console.log("Array y");
+    // console.log(this.y);
+    // console.log("---------------------------------------");
     console.log("Array data");
     console.log(this.data);
+    console.log("#######################################");
   }
 }
 
