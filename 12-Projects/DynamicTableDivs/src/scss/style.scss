@@ -1,0 +1,42 @@
+.table-wrapper {
+  padding: 1rem;
+
+  %border-settings {
+    border: 1px solid black;
+  }
+
+  %flex-settings {
+    display: flex;
+    justify-content: flex-start;
+
+    .t-cell {
+      flex-grow: 1;
+      word-break: break-all;
+      padding: 0.2rem;
+      @extend %border-settings;
+    }
+
+    .empty {
+      flex-grow: 0;
+      width: 3%;
+      @extend %border-settings;
+    }
+  }
+
+  .table {
+    padding: 0.1rem;
+
+    .t-header {
+      text-transform: uppercase;
+      @extend %flex-settings;
+
+      .black {
+        background-color: black;
+      }
+    }
+
+    .t-body {
+      @extend %flex-settings;
+    }
+  }
+}
