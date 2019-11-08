@@ -77,3 +77,7 @@ vue create app-name
 ### RealWorld Starter Kit
 
 [real-world-start-kit-git](https://github.com/gothinkster/realworld-starter-kit/blob/master/FRONTEND_INSTRUCTIONS.md)
+
+### Make Types Generator for TS
+
+[make-types-for-ts](https://jvilk.com/MakeTypes/)
