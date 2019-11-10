@@ -27,9 +27,14 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
+import UserModule from "../store/modules/User/";
 
 @Component
 export default class NavBar extends Vue {
   @Prop() private msg!: string;
+
+  get user() {
+    return UserModule.currentUser;
+  }
 }
 </script>

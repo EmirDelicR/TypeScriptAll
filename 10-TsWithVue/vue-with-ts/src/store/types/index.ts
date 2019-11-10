@@ -1,11 +1,11 @@
-export interface Profile {
+interface Profile {
   username: string;
   bio?: string;
   image?: string;
   following: boolean;
 }
 
-export interface User {
+interface User {
   email: string;
   token: string;
   username: string;
@@ -13,7 +13,9 @@ export interface User {
   image?: string;
 }
 
-export interface UserAuth {
+interface UserAuth {
   email: string;
   password: string;
 }
+
+export { Profile, User, UserAuth };
