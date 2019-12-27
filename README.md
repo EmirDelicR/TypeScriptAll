@@ -227,6 +227,8 @@ Look file _5-Generic_
 
 ## decorators
 
+[More on Decorators](https://www.typescriptlang.org/docs/handbook/decorators.html)
+
 In tsconfig.json
 
 ```javascript
