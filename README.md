@@ -70,11 +70,43 @@ Check the 1-Types folder
 
 ## compiler
 
-NOTE! -> set "strictNullChecks": true
-
 [Documentation](http://www.typescriptlang.org/docs/handbook/tsconfig-json.html)
 
 [Compiler options](http://www.typescriptlang.org/docs/handbook/compiler-options.html)
+
+```console
+# check version
+tsc -v
+
+# compile to js
+tsc script.ts (file name)
+
+# compile to js ES6
+tsc script.ts --target es6
+
+# make tsconfig.json file
+tsc --init
+
+# to compile now use only this need  (tsc --init command)
+tsc
+
+# to compile with watcher
+tsc -w
+```
+
+in tsconfig.json file
+
+```javascript
+{
+  "compilerOptions": { /** */ },
+  "exclude": ["paths_to_file_to_exclude_from_compiling", "**/*.dev.ts", "node_modules"],
+  "include": ["same as above"],
+
+}
+
+// **/*.dev.ts -> any file with ext .dev.ts in any folder
+
+```
 
 [TOP](#content)
 
@@ -87,12 +119,12 @@ NOTE! -> set "strictNullChecks": true
 const makeArray = (name: string, ...args: number[]) => {
   return args;
 };
-makeArray("Test", 1, 2, 3);
+makeArray('Test', 1, 2, 3);
 // Output [1, 2, 3]
 
 /** Passing default value */
 
-const testing = (name: string = "Max"): void => {
+const testing = (name: string = 'Max'): void => {
   console.log(name);
 };
 ```
@@ -100,6 +132,10 @@ const testing = (name: string = "Max"): void => {
 [TOP](#content)
 
 ## classes
+
+[More on (JS) Classes](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes)
+
+[More on TS Interfaces](https://www.typescriptlang.org/docs/handbook/interfaces.html)
 
 Look at file _2-Classes_
 
@@ -197,7 +233,7 @@ const logged = (constructorFn: Function) => {
 @logged
 class Person {
   constructor() {
-    console.log("HI");
+    console.log('HI');
   }
 }
 ```

@@ -5,6 +5,8 @@ class Person {
   private type: string;
   /** Can be access also by classes that inherited this class */
   protected age: number;
+  /** readonly */
+  private readonly status: string = 'admin';
 
   constructor(age: number, ...args: string[]) {
     [this.name, this.type] = args;
@@ -12,12 +14,17 @@ class Person {
   }
 
   printAge() {
-    console.log("Age: ", this.age);
+    console.log('Age: ', this.age);
     this.printType();
   }
 
   private printType() {
-    console.log("Type: ", this.type);
+    console.log('Type: ', this.type);
+  }
+
+  /** To strictly use this class if you for example copy function to other object */
+  printTypeA(this: Person) {
+    console.log('Type: ', this.type);
   }
 
   setType(type: string) {
@@ -25,22 +32,22 @@ class Person {
   }
 }
 
-const person = new Person(25, "Test name", "Some type");
+const person = new Person(25, 'Test name', 'Some type');
 console.log(person);
 person.printAge();
-console.log("/** ######################################## */");
+console.log('/** ######################################## */');
 /** ######################################################################################### */
 
-/** Inheritance */
+/********************* Inheritance **********************/
 
 class Test extends Person {
   /** This will overwrite the parent class property */
-  name: string = "Test";
-  private _title: string = "General";
+  name: string = 'Test';
+  private _title: string = 'General';
 
   constructor(age: number, type: string) {
     /** This will call parent class constructor */
-    super(age, "Max", type);
+    super(age, 'Max', type);
     /** age can be access here but type not */
     this.age = 24;
   }
@@ -55,13 +62,13 @@ class Test extends Person {
   }
 }
 
-let test = new Test(23, "Other type");
+let test = new Test(23, 'Other type');
 console.log(test);
 /** Use setter and getter on title */
-test.title = "Some new title";
+test.title = 'Some new title';
 console.log(test.title);
 
-console.log("/** ######################################## */");
+console.log('/** ######################################## */');
 /** ######################################################################################### */
 
 /** Static properties and methods (not need to make an instance of class)*/
@@ -73,15 +80,15 @@ class Helper {
   }
 }
 
-console.log("Static property: ", Helper.PI);
-console.log("Static Method: ", Helper.calculate(2));
-console.log("/** ######################################## */");
+console.log('Static property: ', Helper.PI);
+console.log('Static Method: ', Helper.calculate(2));
+console.log('/** ######################################## */');
 /** ######################################################################################### */
 
 /* abstract class can not be instance only use as inheritance (not possible to use "new Animal") */
 abstract class Animal {
   private name: string;
-  protected petName: string = "Some pet name";
+  protected petName: string = 'Some pet name';
 
   constructor(theName: string) {
     this.name = theName;
@@ -90,11 +97,11 @@ abstract class Animal {
   abstract changePetName(name: string): void;
 
   walk(distance: number) {
-    console.log(this.name + " walk " + distance);
+    console.log(this.name + ' walk ' + distance);
   }
 }
 
-//inheritance
+// inheritance - this class must have all abstract property's from inherit class
 class Snake extends Animal {
   // ctor + tab --> shortcut for constructor
   constructor(theName: string) {
@@ -110,15 +117,15 @@ class Snake extends Animal {
   }
 }
 
-let snake = new Snake("Snipes");
+let snake = new Snake('Snipes');
 snake.walk(22);
-snake.changePetName("Super Snipes");
+snake.changePetName('Super Snipes');
 console.log(snake);
 
-console.log("/** ######################################## */");
+console.log('/** ######################################## */');
 /** ######################################################################################### */
 
-/** Private constructor and single tone */
+/** Private constructor and singletons */
 
 class OnlyOne {
   /**
@@ -134,7 +141,7 @@ class OnlyOne {
 
   static getInstance() {
     if (!OnlyOne.instance) {
-      OnlyOne.instance = new OnlyOne("The Only One");
+      OnlyOne.instance = new OnlyOne('The Only One');
     }
     return OnlyOne.instance;
   }
@@ -150,13 +157,13 @@ let right = OnlyOne.getInstance();
 console.log(right);
 console.log(right.name);
 
-console.log("/** ######################################## */");
+console.log('/** ######################################## */');
 /** ######################################################################################### */
 
 /* Exercise 1 */
 
 class Car {
-  name: string = "Some name";
+  name: string = 'Some name';
   acceleration: number = 0;
 
   constructor(name: string) {
@@ -164,14 +171,14 @@ class Car {
   }
 
   honk() {
-    console.log("Toooooooooot!");
+    console.log('Toooooooooot!');
   }
 
   accelerate(speed: number) {
     this.acceleration += speed;
   }
 }
-var car = new Car("BMW");
+var car = new Car('BMW');
 car.honk();
 console.log(car.acceleration);
 car.accelerate(10);
@@ -202,7 +209,7 @@ console.log(rect.calcSize());
 /* Exercise 3 */
 
 class TestPerson {
-  private _firstName: string = "";
+  private _firstName: string = '';
 
   get firstName() {
     return this._firstName;
@@ -216,7 +223,7 @@ class TestPerson {
 }
 let person_1 = new TestPerson();
 console.log(person_1.firstName);
-person_1.firstName = "Ma";
+person_1.firstName = 'Ma';
 console.log(person_1.firstName);
-person_1.firstName = "Master";
+person_1.firstName = 'Master';
 console.log(person_1.firstName);

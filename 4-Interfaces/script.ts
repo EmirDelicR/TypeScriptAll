@@ -5,7 +5,7 @@ interface RectangleOptions {
   length: number;
   height?: number; // ?means optional can be or not
   [propName: string]: any; // This is property without specific name
-
+  // readonly test: string;
   calc(width: number): number; // interface for function
 }
 
@@ -15,7 +15,7 @@ const drawRectangle = (options: RectangleOptions) => {
   let width = options.width;
   let length = options.length;
   let coordinates = options.coordinates;
-  console.log("This is coordinates: ", coordinates);
+  console.log('This is coordinates: ', coordinates);
 
   if (options.height) {
     let height = options.height;
@@ -36,7 +36,8 @@ const rectangle: RectangleOptions = {
 drawRectangle(rectangle);
 
 /** Interfaces with class */
-
+// can inherit multiple : implements RectangleOptions, SomeOtherOptions
+// or RectangleOptions can implements SomeOtherOptions  (This will be same)
 class Rectangle implements RectangleOptions {
   width: number = 0;
   length: number = 0;
