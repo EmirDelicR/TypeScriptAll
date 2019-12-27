@@ -211,6 +211,8 @@ Look file _12-AdvanceTypes_
 
 ## generic
 
+[More on Generics](https://www.typescriptlang.org/docs/handbook/generics.html)
+
 To use generic add Type of T like
 
 ```javascript
