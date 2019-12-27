@@ -9,6 +9,7 @@
 [Classes](#classes) <br/>
 [Namespaces and modules](#namespaces) <br/>
 [Interfaces](#interfaces) <br/>
+[Advance Types](#advancetypes) <br/>
 [Generic](#generic) <br/>
 [Decorators](#decorators) <br/>
 [Library](#library) <br/>
@@ -194,7 +195,17 @@ import { calculateRectangle } from "./Math/rectangle";
 
 ## interfaces
 
+[More on TS Interfaces](https://www.typescriptlang.org/docs/handbook/interfaces.html)
+
 Look file _5-Interfaces_
+
+[TOP](#content)
+
+## advancetypes
+
+[More on Advanced Types](https://www.typescriptlang.org/docs/handbook/advanced-types.html)
+
+Look file _12-AdvanceTypes_
 
 [TOP](#content)
 
