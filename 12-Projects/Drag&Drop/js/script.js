@@ -1,4 +1,17 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -29,21 +42,21 @@ var validate = function (input) {
     if (input.required) {
         isValid = isValid && input.value.toString().trim().length !== 0;
     }
-    if (input.minLength != null && typeof input.value === "string") {
+    if (input.minLength != null && typeof input.value === 'string') {
         isValid = isValid && input.value.trim().length >= input.minLength;
     }
-    if (input.maxLength != null && typeof input.value === "string") {
+    if (input.maxLength != null && typeof input.value === 'string') {
         isValid = isValid && input.value.trim().length <= input.maxLength;
     }
-    if (input.min != null && typeof input.value === "number") {
+    if (input.min != null && typeof input.value === 'number') {
         isValid = isValid && input.value >= input.min;
     }
-    if (input.max != null && typeof input.value === "number") {
+    if (input.max != null && typeof input.value === 'number') {
         isValid = isValid && input.value <= input.max;
     }
     return isValid;
 };
-/** #################################################### */
+/** ##################### Project Class ############################### */
 var ProjectStatus;
 (function (ProjectStatus) {
     ProjectStatus[ProjectStatus["Active"] = 0] = "Active";
@@ -59,10 +72,21 @@ var Project = /** @class */ (function () {
     }
     return Project;
 }());
-var ProjectState = /** @class */ (function () {
-    function ProjectState() {
+var State = /** @class */ (function () {
+    function State() {
         this.listeners = [];
-        this.projects = [];
+    }
+    State.prototype.addListener = function (fn) {
+        this.listeners.push(fn);
+    };
+    return State;
+}());
+var ProjectState = /** @class */ (function (_super) {
+    __extends(ProjectState, _super);
+    function ProjectState() {
+        var _this = _super.call(this) || this;
+        _this.projects = [];
+        return _this;
     }
     ProjectState.getInstance = function () {
         if (this.instance) {
@@ -70,9 +94,6 @@ var ProjectState = /** @class */ (function () {
         }
         this.instance = new ProjectState();
         return this.instance;
-    };
-    ProjectState.prototype.addListener = function (fn) {
-        this.listeners.push(fn);
     };
     ProjectState.prototype.addProject = function (obj) {
         var id = Math.random().toString();
@@ -84,24 +105,48 @@ var ProjectState = /** @class */ (function () {
         }
     };
     return ProjectState;
-}());
+}(State));
 var projectState = ProjectState.getInstance();
-/** #################################################### */
-var ProjectList = /** @class */ (function () {
-    function ProjectList(type) {
-        var _this = this;
-        this.type = type;
-        this.assignedProjects = [];
+var Component = /** @class */ (function () {
+    function Component(ids, insertAtStart) {
         /** Access elements */
-        this.templateEl = document.getElementById("project-list");
-        this.hostEl = document.getElementById("app");
+        this.templateEl = document.getElementById(ids.templateId);
+        this.hostEl = document.getElementById(ids.hostElementId);
         /** copy all from template element in index.html */
         var importedNode = document.importNode(this.templateEl.content, true);
         this.element = importedNode.firstElementChild;
-        this.element.id = this.type + "-projects";
+        if (ids.newElementId) {
+            this.element.id = ids.newElementId;
+        }
+        /** Execute functions */
+        this.attachToHostElement(insertAtStart);
+    }
+    Component.prototype.attachToHostElement = function (insertAtStart) {
+        this.hostEl.insertAdjacentElement(insertAtStart ? 'afterbegin' : 'beforeend', this.element);
+    };
+    return Component;
+}());
+/** ##########################  ProjectList Class ################################### */
+var ProjectList = /** @class */ (function (_super) {
+    __extends(ProjectList, _super);
+    function ProjectList(type) {
+        var _this = _super.call(this, {
+            templateId: 'project-list',
+            hostElementId: 'app',
+            newElementId: type + "-projects"
+        }, false) || this;
+        _this.type = type;
+        _this.assignedProjects = [];
+        _this.configure();
+        _this.renderContent();
+        return _this;
+    }
+    ProjectList.prototype.configure = function () {
+        var _this = this;
+        /** Register listener and assign relevant projects */
         projectState.addListener(function (projects) {
             var relevantProjects = projects.filter(function (project) {
-                if (_this.type === "active") {
+                if (_this.type === 'active') {
                     return project.status === ProjectStatus.Active;
                 }
                 return project.status === ProjectStatus.Finished;
@@ -109,52 +154,51 @@ var ProjectList = /** @class */ (function () {
             _this.assignedProjects = relevantProjects;
             _this.renderProjects();
         });
-        this.attachToHostElement();
-        this.renderContent();
-    }
+    };
+    ProjectList.prototype.renderContent = function () {
+        var listId = this.type + "-projects-list";
+        this.element.querySelector('ul').id = listId;
+        this.element.querySelector('h2').textContent =
+            this.type.toUpperCase() + ' PROJECTS';
+    };
     ProjectList.prototype.renderProjects = function () {
         var listEl = document.getElementById(this.type + "-projects-list");
-        listEl.innerHTML = "";
+        listEl.innerHTML = '';
         for (var _i = 0, _a = this.assignedProjects; _i < _a.length; _i++) {
             var prjItem = _a[_i];
-            var listItem = document.createElement("li");
+            var listItem = document.createElement('li');
             listItem.textContent = prjItem.title;
             listEl.appendChild(listItem);
         }
     };
-    ProjectList.prototype.renderContent = function () {
-        var listId = this.type + "-projects-list";
-        this.element.querySelector("ul").id = listId;
-        this.element.querySelector("h2").textContent =
-            this.type.toUpperCase() + " PROJECTS";
-    };
-    ProjectList.prototype.attachToHostElement = function () {
-        this.hostEl.insertAdjacentElement("beforeend", this.element);
-    };
     return ProjectList;
-}());
-/** #################################################### */
-var ProjectInput = /** @class */ (function () {
+}(Component));
+/** ###################### ProjectInput Class ############################## */
+var ProjectInput = /** @class */ (function (_super) {
+    __extends(ProjectInput, _super);
     function ProjectInput() {
-        /** Access elements */
-        this.templateEl = document.getElementById("project-input");
-        this.hostEl = document.getElementById("app");
-        /** copy all from template element in index.html */
-        var importedNode = document.importNode(this.templateEl.content, true);
-        this.element = importedNode.firstElementChild;
-        this.element.id = "user-input";
+        var _this = _super.call(this, {
+            templateId: 'project-input',
+            hostElementId: 'app',
+            newElementId: 'user-input'
+        }, true) || this;
         /** Query other elements in form */
-        this.titleInputEl = this.element.querySelector("#title");
-        this.descriptionInputEl = this.element.querySelector("#description");
-        this.peopleInputEl = this.element.querySelector("#people");
+        _this.titleInputEl = _this.element.querySelector('#title');
+        _this.descriptionInputEl = _this.element.querySelector('#description');
+        _this.peopleInputEl = _this.element.querySelector('#people');
         /** Execute functions */
-        this.configure();
-        this.attachToHostElement();
+        _this.configure();
+        return _this;
     }
+    /** Configure event listener to element */
+    ProjectInput.prototype.configure = function () {
+        this.element.addEventListener('submit', this.submitHandler);
+    };
+    ProjectInput.prototype.renderContent = function () { };
     ProjectInput.prototype.clearInputs = function () {
-        this.titleInputEl.value = "";
-        this.descriptionInputEl.value = "";
-        this.peopleInputEl.value = "";
+        this.titleInputEl.value = '';
+        this.descriptionInputEl.value = '';
+        this.peopleInputEl.value = '';
     };
     ProjectInput.prototype.gatherUserInput = function () {
         var title = this.titleInputEl.value;
@@ -178,7 +222,7 @@ var ProjectInput = /** @class */ (function () {
         if (!validate(titleValidator) ||
             !validate(descValidator) ||
             !validate(peopleValidator)) {
-            console.log("Input is wrong!");
+            console.log('Input is wrong!');
             return;
         }
         return [title, description, +people];
@@ -193,18 +237,12 @@ var ProjectInput = /** @class */ (function () {
             this.clearInputs();
         }
     };
-    /** Configure event listener to element */
-    ProjectInput.prototype.configure = function () {
-        this.element.addEventListener("submit", this.submitHandler);
-    };
-    ProjectInput.prototype.attachToHostElement = function () {
-        this.hostEl.insertAdjacentElement("afterbegin", this.element);
-    };
     __decorate([
         AutoBind
     ], ProjectInput.prototype, "submitHandler", null);
     return ProjectInput;
-}());
+}(Component));
+/** ################################################################## */
 var project = new ProjectInput();
-var activeList = new ProjectList("active");
-var finishedList = new ProjectList("finished");
+var activeList = new ProjectList('active');
+var finishedList = new ProjectList('finished');
