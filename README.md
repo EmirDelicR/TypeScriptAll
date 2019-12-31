@@ -120,12 +120,12 @@ in tsconfig.json file
 const makeArray = (name: string, ...args: number[]) => {
   return args;
 };
-makeArray('Test', 1, 2, 3);
+makeArray("Test", 1, 2, 3);
 // Output [1, 2, 3]
 
 /** Passing default value */
 
-const testing = (name: string = 'Max'): void => {
+const testing = (name: string = "Max"): void => {
   console.log(name);
 };
 ```
@@ -165,6 +165,27 @@ MyMath.calculateRectangle(10, 20)
 NOTE! Use modules instead of namespaces
 
 **_ Modules _**
+
+```javascript
+export interface Draggable {
+  dragStartHandler(event: DragEvent): void;
+  dragEndHandler(event: DragEvent): void;
+}
+
+export interface DragTarget {
+  dragOverHandler(event: DragEvent): void;
+  dropHandler(event: DragEvent): void;
+  dragLeaveHandler(event: DragEvent): void;
+}
+
+// in file just import but as .js file
+import { Draggable } from "../interfaces/drag-drop.js";
+
+// in index.html file where import script set type="module"
+<script src="js/script.js" type="module"></script>;
+```
+
+This is old way
 
 ```console
 npm install --save systemjs@0.21.5
@@ -248,7 +269,7 @@ const logged = (constructorFn: Function) => {
 @logged
 class Person {
   constructor() {
-    console.log('HI');
+    console.log("HI");
   }
 }
 ```
