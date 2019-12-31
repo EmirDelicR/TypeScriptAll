@@ -1,5 +1,5 @@
-import { templateIdConfig } from "../interfaces/helpers.js";
-import { AFTER, BEFORE } from "../utils/constants.js";
+import { templateIdConfig } from "../interfaces/helpers";
+import { AFTER, BEFORE } from "../utils/constants";
 /**
  * This is an abstract class -
  * that means that can only be inherit and not be an instance

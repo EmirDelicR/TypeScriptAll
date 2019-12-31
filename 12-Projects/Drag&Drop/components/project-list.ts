@@ -1,10 +1,10 @@
-import { TRANSFER_TYPE } from "../utils/constants.js";
-import { DragTarget } from "../interfaces/drag-drop.js";
-import { Component } from "./base.js";
-import { AutoBind } from "../decorators/autobind.js";
-import { projectState } from "../state/project-state.js";
-import { Project, ProjectStatus } from "../models/project.js";
-import { ProjectItem } from "./project-item.js";
+import { TRANSFER_TYPE } from "../utils/constants";
+import { DragTarget } from "../interfaces/drag-drop";
+import { Component } from "./base";
+import { AutoBind } from "../decorators/autobind";
+import { projectState } from "../state/project-state";
+import { Project, ProjectStatus } from "../models/project";
+import { ProjectItem } from "./project-item";
 
 export class ProjectList extends Component<HTMLDivElement, HTMLElement>
   implements DragTarget {

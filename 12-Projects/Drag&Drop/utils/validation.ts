@@ -1,4 +1,4 @@
-import { Validate } from "../interfaces/helpers.js";
+import { Validate } from "../interfaces/helpers";
 
 export const validate = (input: Validate) => {
   let isValid = true;

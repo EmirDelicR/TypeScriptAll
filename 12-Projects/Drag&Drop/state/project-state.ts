@@ -1,5 +1,5 @@
-import { UserInput } from "../interfaces/helpers.js";
-import { Project, ProjectStatus } from "../models/project.js";
+import { UserInput } from "../interfaces/helpers";
+import { Project, ProjectStatus } from "../models/project";
 
 type Listener<T> = (items: T[]) => void;
 
