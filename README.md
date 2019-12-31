@@ -13,7 +13,7 @@
 [Generic](#generic) <br/>
 [Decorators](#decorators) <br/>
 [Library](#library) <br/>
-[Workflow](#workflow) <br/>
+[Workflow (Gulp/Webpack/Libraries)](#workflow) <br/>
 [Ts with React](#react)<br/>
 [Ts with Vue](#vue)<br/>
 [Projects](#projects)<br/>
@@ -166,6 +166,10 @@ NOTE! Use modules instead of namespaces
 
 **_ Modules _**
 
+[JavaScript Modules (Overview)](https://medium.com/computed-comparisons/commonjs-vs-amd-vs-requirejs-vs-es6-modules-2e814b114a0b)
+
+[More on ES Modules:](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules)
+
 ```javascript
 export interface Draggable {
   dragStartHandler(event: DragEvent): void;
@@ -183,6 +187,9 @@ import { Draggable } from "../interfaces/drag-drop.js";
 
 // in index.html file where import script set type="module"
 <script src="js/script.js" type="module"></script>;
+// in tsconfig.json
+"target": "es6"
+"module": "es2015"
 ```
 
 This is old way
@@ -330,38 +337,81 @@ npm run build
 
 _Webpack_
 
+[Official Webpack Docs:](https://webpack.js.org/)
+
 ```console
-npm install webpack webpack-cli typescript ts-loader --save-dev
+npm install webpack webpack-cli webpack-dev-server typescript ts-loader --save-dev
 ```
 
 ```javascript
-// Remove from tsconfig.json file
-"module": "commonjs",
+// in tsconfig.json file
+"target": "es6",
+"module": "es2015"
 
 // create webpack.config.js file
+const path = require("path");
+
 module.exports = {
-  entry: "./app.ts",
+  mode: "development",
+  entry: "./script.ts",
   output: {
-    filename: "./bundle.js"
+    filename: "bundle.js",
+    path: path.resolve(__dirname, "js"),
+    publicPath: "js"
   },
-  devtool: "source-map",
+  devtool: "inline-source-map",
   resolve: {
-    extensions: ["*", ".ts", ".tsx", ".js"]
+    extensions: [".ts", ".js"]
   },
   module: {
-    rules: [{ test: /\.tsx?$/, loader: "ts-loader" }]
+    rules: [{ test: /\.ts$/, use: "ts-loader", exclude: /node_modules/ }]
   }
 };
+
 
 // Add this to package.json
 "scripts": {
   "build": "webpack -d --watch",
-  "build:prod": "webpack -p"
+  "build:prod": "webpack -p",
+  // OR
+  "build:prod": "webpack --config webpack.config.prod.js",
+
+  "start": "webpack-dev-server",
 },
 ```
 
 ```console
 npm run build
+```
+
+Clean up webpack package see webpack.config.prod.js file
+
+```console
+npm i --save-dev clean-webpack-plugin
+```
+
+_3rd Party Libraries_
+
+[class-transformer](https://github.com/typestack/class-transformer)
+
+[class-validator](https://github.com/typestack/class-validator)
+
+```console
+npm i --save lodash
+npm i --save-dev @types/lodash
+```
+
+```javascript
+import _ from "lodash";
+
+console.log(_.shuffle([1, 2, 3, 4]));
+```
+
+if @types/library does not exists
+
+```javascript
+// but avoid to use this
+declare var GLOBAL: any;
 ```
 
 [TOP](#content)
