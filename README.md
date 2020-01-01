@@ -14,8 +14,9 @@
 [Decorators](#decorators) <br/>
 [Library](#library) <br/>
 [Workflow (Gulp/Webpack/Libraries)](#workflow) <br/>
-[Ts with React](#react)<br/>
-[Ts with Vue](#vue)<br/>
+[TS with React](#react)<br/>
+[TS with Vue](#vue)<br/>
+[TS with NODE](#node)<br/>>
 [Projects](#projects)<br/>
 
 ## intro
@@ -449,6 +450,29 @@ vue create my-project-name
 ```
 
 Choose manually options and pick Typescript and that is all
+
+[TOP](#content)
+
+## node
+
+```console
+npm init
+tsc --init
+
+npm i --save express body-parser
+npm i --save-dev nodemon @types/node @types/express
+
+tsc -w
+npm start
+```
+
+in tsconfig.js file
+
+```javascript
+"target": "es2018"
+"module": "commonjs"
+"moduleResolution": "Node",
+```
 
 [TOP](#content)
 
