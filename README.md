@@ -429,7 +429,7 @@ sudo npm install -g create-react-app
 Create react app with typescript
 
 ```console
-npx create-react-app my-app --typescript
+create-react-app my-app --typescript
 ```
 
 [TOP](#content)
