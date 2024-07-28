@@ -94,6 +94,9 @@ tsc
 
 # to compile with watcher
 tsc -w
+
+# run with node first compile and then run
+tsc advance.ts | node advance.js
 ```
 
 in tsconfig.json file
@@ -121,12 +124,12 @@ in tsconfig.json file
 const makeArray = (name: string, ...args: number[]) => {
   return args;
 };
-makeArray("Test", 1, 2, 3);
+makeArray('Test', 1, 2, 3);
 // Output [1, 2, 3]
 
 /** Passing default value */
 
-const testing = (name: string = "Max"): void => {
+const testing = (name: string = 'Max'): void => {
   console.log(name);
 };
 ```
@@ -277,7 +280,7 @@ const logged = (constructorFn: Function) => {
 @logged
 class Person {
   constructor() {
-    console.log("HI");
+    console.log('HI');
   }
 }
 ```
@@ -403,7 +406,7 @@ npm i --save-dev @types/lodash
 ```
 
 ```javascript
-import _ from "lodash";
+import _ from 'lodash';
 
 console.log(_.shuffle([1, 2, 3, 4]));
 ```
