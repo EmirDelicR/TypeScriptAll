@@ -36,6 +36,8 @@
 16. Preserving AutoComplete for Literal Unions
 17. Create type assertion functions
 18. Prettify for nested types
+19. Derive a union type from an object
+20. Use 'in' operator to transform a union to another union
 */
 
 /* 1. Why enums are bad */
@@ -583,6 +585,92 @@ type Prettify<T> = {
 type Check = Prettify<NestedType>;
 
 /** ################################################################################################################################################################################################# */
+/** 19. Derive a union type from an object */
+const fruitsCount = {
+  apple: 1,
+  banana: 6,
+};
+
+type FruitsCount = typeof fruitsCount;
+
+type NewNestedFruitCount<TObj> = {
+  [TKey in keyof TObj]: {
+    [TKey in keyof TObj]: TObj[TKey];
+  };
+};
+
+const nestedFruitCount: NewNestedFruitCount<FruitsCount> = {
+  apple: {
+    apple: 1,
+    banana: 6,
+  },
+  banana: {
+    apple: 1,
+    banana: 6,
+  },
+};
+
+/** This will omit keys and bring back to initial */
+type NewXNestedFruitCount<TObj> = {
+  [TKey in keyof TObj]: {
+    [TKey in keyof TObj]: TObj[TKey];
+  };
+}[keyof TObj];
+
+const nestedXFruitCount: NewXNestedFruitCount<FruitsCount> = {
+  apple: 1,
+  banana: 6,
+};
+
+type NewSingleFruitCount<TObj> = {
+  [TKey in keyof TObj]: {
+    [TKey2 in TKey]: number;
+  };
+}[keyof TObj];
+
+const singleFruitCount: NewSingleFruitCount<FruitsCount> = {
+  banana: 2,
+};
+
+type NewXSingleFruitCount<TObj> = {
+  [TKey in keyof TObj]: {
+    [TKey2 in TKey]: TObj[TKey];
+  };
+}[keyof TObj];
+
+const singleXFruitCount: NewXSingleFruitCount<FruitsCount> = {
+  banana: 2,
+};
+
+/** ################################################################################################################################################################################################# */
+
+/** 20. Use 'in' operator to transform a union to another union */
+type Entity =
+  | {
+      type: "user";
+    }
+  | {
+      type: "admin";
+    }
+  | {
+      type: "superAdmin";
+    };
+
+// Goal is to add id to this elements like userId, adminId, superAdminId
+
+type EntityWithId = {
+  [TEntityType in Entity["type"]]: {
+    type: TEntityType;
+  } & Record<`${TEntityType}Id`, string>;
+}[Entity["type"]];
+
+const entityWithId: EntityWithId = {
+  type: "admin",
+  adminId: "121",
+};
+
+/** ################################################################################################################################################################################################# */
+
 /*** Exercises  */
 
 /* Exercises 1
