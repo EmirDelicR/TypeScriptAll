@@ -51,12 +51,12 @@ const keys = Object.keys(LoginMode);
 // [ '0', '1', 'email', 'social' ]
 
 // Fix is to use type
-type LoginModeType = "email" | "social";
+type LoginModeType = 'email' | 'social';
 
 // Other option is to use
 const LoginModeConst = {
-  email: "email",
-  social: "social",
+  email: 'email',
+  social: 'social',
 } as const;
 
 // It will be same as LoginModeType
@@ -64,14 +64,14 @@ type LoginModeFromConstType = keyof typeof LoginModeConst;
 
 /** ################################################################################################################################################################################################# */
 /* 2. TypeScript Template Literal Types */
-type CSSItem = "px" | "em" | "rem";
+type CSSItem = 'px' | 'em' | 'rem';
 type CSSValue = `${number}${CSSItem}`;
-const css: CSSValue = "20px";
+const css: CSSValue = '20px';
 
-type ButtonSize = "small" | "medium" | "large";
-type ButtonType = "primary" | "secondary";
+type ButtonSize = 'small' | 'medium' | 'large';
+type ButtonType = 'primary' | 'secondary';
 type ButtonStyle = `${ButtonSize}-${ButtonType}`;
-const but: ButtonStyle = "large-primary";
+const but: ButtonStyle = 'large-primary';
 
 /** ################################################################################################################################################################################################# */
 /** 3. TypeScript Mapped Types as clauses */
@@ -83,7 +83,7 @@ type State = {
 
 // Example of setter declaration
 type SetProperty<K extends string> = `set${Capitalize<K>}`;
-type ExampleName = SetProperty<"name">; // setName
+type ExampleName = SetProperty<'name'>; // setName
 
 // Generic type for store
 type Setters<State> = {
@@ -104,23 +104,23 @@ type PersonStore = Store<State>;
 declare const personStore: PersonStore;
 
 personStore.setAge(20);
-personStore.setName("John");
+personStore.setName('John');
 const personName = personStore.getName();
 const personAge = personStore.getAge();
 
 /** ################################################################################################################################################################################################# */
 /** 4. TypeScript satisfies operator  */
 
-type ColorString = "red" | "blue";
+type ColorString = 'red' | 'blue';
 type ColorRGB = [red: number, green: number, blue: number];
 type Color = ColorString | ColorRGB;
 
 type Theme = Record<string, Color>;
 
 const theme = {
-  primary: "red",
+  primary: 'red',
   secondary: [0, 255, 255],
-  tertiary: "blue",
+  tertiary: 'blue',
 } satisfies Theme;
 
 // If we do theme: Theme = g: string | number but with satisfies we get g: number
@@ -139,29 +139,29 @@ type ExampleLookup = {
       name: string;
       userName: string;
     }[];
-    super: ["view", "create", "update", "delete"];
+    super: ['view', 'create', 'update', 'delete'];
   };
 };
 
-type CardTokenType = Pick<ExampleLookup["user"]["billing"], "cardToken">;
-type Billing = ExampleLookup["user"]["billing"]["card"];
-type Alias = ExampleLookup["user"]["aliases"][0];
-type AllBillings = keyof ExampleLookup["user"]["billing"];
+type CardTokenType = Pick<ExampleLookup['user']['billing'], 'cardToken'>;
+type Billing = ExampleLookup['user']['billing']['card'];
+type Alias = ExampleLookup['user']['aliases'][0];
+type AllBillings = keyof ExampleLookup['user']['billing'];
 type AllUserTypes = ExampleLookup[keyof ExampleLookup];
 type AllUserTypesFromInner =
-  ExampleLookup[keyof ExampleLookup][keyof ExampleLookup["user"]];
-type AllUserSuperTypes = ExampleLookup["user"]["super"][number];
+  ExampleLookup[keyof ExampleLookup][keyof ExampleLookup['user']];
+type AllUserSuperTypes = ExampleLookup['user']['super'][number];
 function getBillingCardToken(): CardTokenType {
   return {
-    cardToken: "12345-XXXX",
+    cardToken: '12345-XXXX',
   };
 }
 
 // Remove object prefix
 
 type ApiData = {
-  "maps:log": string;
-  "maps:lat": string;
+  'maps:log': string;
+  'maps:lat': string;
 };
 
 type RemoveMaps<T> = T extends `maps:${infer U}` ? U : T;
@@ -189,19 +189,19 @@ function getPersonItem<TObj, TKey extends keyof TObj>(object: TObj, key: TKey) {
 }
 
 // @ed Important - Pick have same implementation
-type x = Pick<PersonKeyofExample, "age">;
+type x = Pick<PersonKeyofExample, 'age'>;
 
 const PExample: PersonKeyofExample = {
-  name: "John",
+  name: 'John',
   age: 32,
 };
 
 // String can be done in this way but other are more generic
-type itemX = ReturnType<typeof getPersonItem<typeof PExample, "name">>;
+type itemX = ReturnType<typeof getPersonItem<typeof PExample, 'name'>>;
 // string
-const item1 = getPersonItem(PExample, "name");
+const item1 = getPersonItem(PExample, 'name');
 // number
-const item2 = getPersonItem(PExample, "age");
+const item2 = getPersonItem(PExample, 'age');
 
 /** Get deepValue of object */
 const getDeepValue = <T, FKey extends keyof T, SKey extends keyof T[FKey]>(
@@ -218,12 +218,12 @@ const DeepReturnExample = {
     b: 2,
   },
   bar: {
-    c: "cool",
+    c: 'cool',
     d: 2,
   },
 };
 
-const itemExample = getDeepValue(DeepReturnExample, "bar", "d");
+const itemExample = getDeepValue(DeepReturnExample, 'bar', 'd');
 
 /** ################################################################################################################################################################################################# */
 /** 7. Extract values of specific key */
@@ -252,6 +252,39 @@ type NewExtractedUnion = ValuesOfKeysStartingWithA<ExtractExample>;
 // {a: string, a1: number}
 type NewExtractedType = ObjectOfKeysStartingWithA<ExtractExample>;
 
+// My version with dynamic key:
+
+type ExtractKeys<T, TKey extends string> = T extends `${TKey}${string}`
+  ? T
+  : never;
+
+type ObjectOfKeysStartingWith<
+  TObj,
+  KeyStartsWithToExtract extends string,
+  TExtractedKeys extends ExtractKeys<
+    keyof TObj,
+    KeyStartsWithToExtract
+  > = ExtractKeys<keyof TObj, KeyStartsWithToExtract>
+> = {
+  [TKey in TExtractedKeys]: TObj[TKey];
+};
+
+type ValuesOfKeysStartingWith<
+  TObj,
+  KeyStartsWithToExtract extends string,
+  TExtractedKeys extends ExtractKeys<
+    keyof TObj,
+    KeyStartsWithToExtract
+  > = ExtractKeys<keyof TObj, KeyStartsWithToExtract>
+> = {
+  [TKey in TExtractedKeys]: TObj[TKey];
+}[TExtractedKeys];
+
+// number
+type NewMyExtractedUnion = ValuesOfKeysStartingWith<ExtractExample, 'a', 'a1'>;
+// {a: string}
+type NewMyExtractedType = ObjectOfKeysStartingWith<ExtractExample, 'a', 'a'>;
+
 /** ################################################################################################################################################################################################# */
 /** 8. Remove keys from object */
 
@@ -261,7 +294,7 @@ const makeKeyRemover =
     return {} as Omit<TObj, TKey>;
   };
 
-const keyRemover = makeKeyRemover(["a", "b"]);
+const keyRemover = makeKeyRemover(['a', 'b']);
 
 const keyRemoveObject = keyRemover({ a: 1, b: 2, c: 3 });
 // Now you only have keyRemoveObject.c
@@ -348,30 +381,30 @@ const pointItemGenericReadonly: Readonly<Point> = {
 /** ################################################################################################################################################################################################# */
 /** 11. extends in ts  constrains type*/
 
-type ResultInf = true extends boolean ? "true" : "false"; // Use extends to check if item is of specific type
+type ResultInf = true extends boolean ? 'true' : 'false'; // Use extends to check if item is of specific type
 
 // Example of extends
 type TypeName<T> = T extends string
-  ? "string"
+  ? 'string'
   : T extends number
-  ? "number"
+  ? 'number'
   : T extends boolean
-  ? "boolean"
+  ? 'boolean'
   : T extends undefined
-  ? "undefined"
+  ? 'undefined'
   : T extends Function
-  ? "function"
-  : "object";
+  ? 'function'
+  : 'object';
 
 function getTypeName<T>(t: T): TypeName<T> {
   return typeof t as TypeName<T>;
 }
 
-const str = getTypeName("some_string");
+const str = getTypeName('some_string');
 const bol = getTypeName(true);
 
 // This will return "hello__world--friend"
-const stringUtil = "hello_world-friend".replace(
+const stringUtil = 'hello_world-friend'.replace(
   /(_|-)/g,
   (item) => `${item}${item}`
 );
@@ -393,12 +426,12 @@ const exampleDeepReadonly: DeepReadonly<{ a: { b: number } }> = {
 /** 13. is in typescript */
 
 type Square = {
-  type: "square";
+  type: 'square';
   size: number;
 };
 
 type Rectangle = {
-  type: "rectangle";
+  type: 'rectangle';
   height: number;
   width: number;
 };
@@ -406,13 +439,13 @@ type Rectangle = {
 type Shape = Square | Rectangle;
 
 const shape: Shape[] = [
-  { type: "square", size: 2 },
-  { type: "rectangle", height: 2, width: 2 },
+  { type: 'square', size: 2 },
+  { type: 'rectangle', height: 2, width: 2 },
 ];
 
 // It will cast to proper type
-const isSquare = (s: Shape): s is Square => s.type === "square";
-const isRectangle = (s: Shape): s is Rectangle => s.type === "rectangle";
+const isSquare = (s: Shape): s is Square => s.type === 'square';
+const isRectangle = (s: Shape): s is Rectangle => s.type === 'rectangle';
 
 const square = shape.find(isSquare);
 const size = square?.size;
@@ -447,8 +480,8 @@ const width = rectangle?.width;
 /** 15. Force function to get proper parameters */
 
 // With out this we can pass accBalance as first arg to function
-type AccountNumber = number & { _: "accNumber" };
-type AccountBalance = number & { _: "accBalance" };
+type AccountNumber = number & { _: 'accNumber' };
+type AccountBalance = number & { _: 'accBalance' };
 
 const makeAccNumber = (accNumber: number) => accNumber as AccountNumber;
 const makeAccBalance = (accBalance: number) => accBalance as AccountBalance;
@@ -472,24 +505,24 @@ setupAccount(accNumber, accBalance);
 /** Dynamic function arguments with GENERICS */
 type CustomEvent =
   | {
-      type: "LOG_IN";
+      type: 'LOG_IN';
       payload: {
         userId: string;
       };
     }
   | {
-      type: "SIGN_OUT";
+      type: 'SIGN_OUT';
     };
 
-const sendEvent = <T extends CustomEvent["type"]>(
+const sendEvent = <T extends CustomEvent['type']>(
   ...args: Extract<CustomEvent, { type: T }> extends { payload: infer P }
     ? [type: T, payload: P]
     : [type: T]
 ) => {};
 
 /** Correct */
-sendEvent("SIGN_OUT");
-sendEvent("LOG_IN", { userId: "123" });
+sendEvent('SIGN_OUT');
+sendEvent('LOG_IN', { userId: '123' });
 
 /** Incorrect */
 // sendEvent("SIGN_OUT", {});
@@ -500,16 +533,16 @@ sendEvent("LOG_IN", { userId: "123" });
 /** 16. Preserving AutoComplete for Literal Unions */
 
 // solution one
-type Padding = "sm" | "md" | "lg" | (string & {});
+type Padding = 'sm' | 'md' | 'lg' | (string & {});
 // solution two
 type LooseAutocomplete<T extends string> = T | Omit<string, T>;
-type LoosePadding = LooseAutocomplete<"sm" | "md" | "lg">;
+type LoosePadding = LooseAutocomplete<'sm' | 'md' | 'lg'>;
 
 // Now we will have auto complete
-const padding: Padding = "lg";
-const padding2: Padding = "8px";
-const padding3: LoosePadding = "md";
-const padding4: LoosePadding = "8px";
+const padding: Padding = 'lg';
+const padding2: Padding = '8px';
+const padding3: LoosePadding = 'md';
+const padding4: LoosePadding = '8px';
 
 /** ################################################################################################################################################################################################# */
 /** 17. Create type assertion functions */
@@ -542,10 +575,10 @@ type Equal<A, B> = (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B
  */
 type Expect<T extends true> = Equal<T, true>;
 
-type Length<T extends readonly string[]> = T["length"];
+type Length<T extends readonly string[]> = T['length'];
 
-const a = ["A", "B", "C"] as const;
-const bx = ["A", "B"] as const;
+const a = ['A', 'B', 'C'] as const;
+const bx = ['A', 'B'] as const;
 
 type CasesLength = [
   Expect<Equal<Length<typeof a>, 3>>,
@@ -563,9 +596,9 @@ type CasesFirst = [
 
 type ErrorsFirst = [
   // @ts-expect-error
-  First<"noArray">,
+  First<'noArray'>,
   // @ts-expect-error
-  First<{ 0: "arrayLike" }>
+  First<{ 0: 'arrayLike' }>
 ];
 
 /** ################################################################################################################################################################################################# */
@@ -647,26 +680,26 @@ const singleXFruitCount: NewXSingleFruitCount<FruitsCount> = {
 /** 20. Use 'in' operator to transform a union to another union */
 type Entity =
   | {
-      type: "user";
+      type: 'user';
     }
   | {
-      type: "admin";
+      type: 'admin';
     }
   | {
-      type: "superAdmin";
+      type: 'superAdmin';
     };
 
 // Goal is to add id to this elements like userId, adminId, superAdminId
 
 type EntityWithId = {
-  [TEntityType in Entity["type"]]: {
+  [TEntityType in Entity['type']]: {
     type: TEntityType;
   } & Record<`${TEntityType}Id`, string>;
-}[Entity["type"]];
+}[Entity['type']];
 
 const entityWithId: EntityWithId = {
-  type: "admin",
-  adminId: "121",
+  type: 'admin',
+  adminId: '121',
 };
 
 /** ################################################################################################################################################################################################# */
@@ -703,14 +736,14 @@ Higher difficulty bonus exercise:
 */
 
 interface User {
-  type: "user";
+  type: 'user';
   name: string;
   age: number;
   occupation: string;
 }
 
 interface Admin {
-  type: "admin";
+  type: 'admin';
   name: string;
   age: number;
   role: string;
@@ -720,27 +753,27 @@ export type Person = User | Admin;
 
 export const persons: Person[] = [
   {
-    type: "user",
-    name: "Max Mustermann",
+    type: 'user',
+    name: 'Max Mustermann',
     age: 25,
-    occupation: "Chimney sweep",
+    occupation: 'Chimney sweep',
   },
-  { type: "admin", name: "Jane Doe", age: 32, role: "Administrator" },
-  { type: "user", name: "Kate Müller", age: 23, occupation: "Astronaut" },
-  { type: "admin", name: "Bruce Willis", age: 64, role: "World saver" },
-  { type: "user", name: "Wilson", age: 23, occupation: "Ball" },
-  { type: "admin", name: "Agent Smith", age: 23, role: "Anti-virus engineer" },
+  { type: 'admin', name: 'Jane Doe', age: 32, role: 'Administrator' },
+  { type: 'user', name: 'Kate Müller', age: 23, occupation: 'Astronaut' },
+  { type: 'admin', name: 'Bruce Willis', age: 64, role: 'World saver' },
+  { type: 'user', name: 'Wilson', age: 23, occupation: 'Ball' },
+  { type: 'admin', name: 'Agent Smith', age: 23, role: 'Anti-virus engineer' },
 ];
 
 export function logPerson(person: Person) {
   console.log(
     ` - ${person.name}, ${person.age}, ${
-      person.type === "admin" ? person.role : person.occupation
+      person.type === 'admin' ? person.role : person.occupation
     }`
   );
 }
 
-type Criteria<T> = Partial<Omit<T, "type">>;
+type Criteria<T> = Partial<Omit<T, 'type'>>;
 
 export function getObjectKeys<T>(criteria: Criteria<T>) {
   return Object.keys(criteria) as (keyof Criteria<T>)[];
@@ -748,12 +781,12 @@ export function getObjectKeys<T>(criteria: Criteria<T>) {
 
 export function filterPersons(
   persons: Person[],
-  personType: User["type"],
+  personType: User['type'],
   criteria: Criteria<User>
 ): User[];
 export function filterPersons(
   persons: Person[],
-  personType: Admin["type"],
+  personType: Admin['type'],
   criteria: Criteria<Admin>
 ): Admin[];
 export function filterPersons(
@@ -771,15 +804,15 @@ export function filterPersons(
     });
 }
 
-export const usersOfAge23 = filterPersons(persons, "user", { age: 23 });
-export const adminsOfAge23 = filterPersons(persons, "admin", { age: 23 });
+export const usersOfAge23 = filterPersons(persons, 'user', { age: 23 });
+export const adminsOfAge23 = filterPersons(persons, 'admin', { age: 23 });
 
-console.log("Users of age 23:");
+console.log('Users of age 23:');
 usersOfAge23.forEach(logPerson);
 
 console.log();
 
-console.log("Admins of age 23:");
+console.log('Admins of age 23:');
 adminsOfAge23.forEach(logPerson);
 
 // In case you are stuck:
