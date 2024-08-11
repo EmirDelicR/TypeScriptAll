@@ -2,7 +2,35 @@
 
 import type { Alike, Equal, Expect, Prettify } from "./index.d";
 
-/* solution */
+/* _______________ CONTENT ______________ */
+
+/*
+
+1. CUSTOM PICK
+2. CUSTOM EXCLUDE
+3. CUSTOM OMIT
+4. CUSTOM READONLY and PARTIAL READONLY and DEEP_READONLY
+5. CUSTOM AWAITED
+6. CUSTOM RETURN TYPE
+7. CREATE OBJECT FROM TUPLE
+8. GET LENGTH OF TUPLE
+9. GET FIRST ITEM TYPE FROM ARRAY
+10. GET LAST ITEM TYPE FROM ARRAY
+11. CONCAT TUPLE
+12. CUSTOM INCLUDES
+13. CUSTOM PUSH
+14. CUSTOM POP
+15. CUSTOM UNSHIFT
+16. PARAMETER TYPE FROM FUNCTION RETURN
+17. CUSTOM ERRORS IN TypeScript 
+18. TRIM TEXT
+19. CUSTOM CAPITALIZE
+20. REPLACE STRING
+*/
+/* _______________--------------------------------- ______________ */
+
+/* _____________ TASK 1 - CUSTOM PICK  _____________ */
+
 type MyPick<T, K extends keyof T> = {
   [P in K]: T[P];
 };
@@ -35,7 +63,7 @@ type ExpectedPick2 = {
 
 /** ########################################################################################################################## */
 
-/* _____________ TASK 2 - create custom Exclude _____________ */
+/* _____________ TASK 2 - CUSTOM EXCLUDE _____________ */
 
 /*  
     T extends K - if T type have K Type 
@@ -58,7 +86,7 @@ type ExcludeExample = "a" | "b" | "c";
 
 /** ########################################################################################################################## */
 
-/* _____________ TASK 3 - create custom Omit _____________ */
+/* _____________ TASK 3 - CUSTOM OMIT _____________ */
 
 /* solution */
 type MyOmit<T, K extends keyof T> = MyPick<T, MyExclude<keyof T, K>>;
@@ -101,7 +129,7 @@ type ExpectedOmit2 = {
 
 /** ########################################################################################################################## */
 
-/* _____________ TASK 4 - create custom Readonly and PARTIAL Readonly and DeepReadonly_____________ */
+/* _____________ TASK 4 - CUSTOM READONLY and PARTIAL READONLY and DEEP_READONLY_____________ */
 
 /* solution */
 type MyReadonly<T> = {
@@ -258,7 +286,68 @@ type ExpectedDeepReadonly2 = { readonly a: string } | { readonly b: number };
 
 /** ########################################################################################################################## */
 
-/* _____________ TASK 5 - create object from tuple _____________ */
+/* _____________ TASK 5 - CUSTOM  AWAITED _____________ */
+
+type MyAwaited<T> = T extends PromiseLike<infer U>
+  ? U extends PromiseLike<any>
+    ? MyAwaited<U>
+    : U
+  : never;
+
+/* _____________ Test Cases _____________ */
+type X = Promise<string>;
+type Y = Promise<{ field: number }>;
+type Z = Promise<Promise<string | number>>;
+type Z1 = Promise<Promise<Promise<string | boolean>>>;
+type T = { then: (onfulfilled: (arg: number) => any) => any };
+
+type CasesAwaited = [
+  Expect<Equal<MyAwaited<X>, string>>,
+  Expect<Equal<MyAwaited<Y>, { field: number }>>,
+  Expect<Equal<MyAwaited<Z>, string | number>>,
+  Expect<Equal<MyAwaited<Z1>, string | boolean>>,
+  Expect<Equal<MyAwaited<T>, number>>
+];
+
+/* _____________ TASK 5 - END _____________ */
+
+/** ########################################################################################################################## */
+/* _____________ TASK 6 - CUSTOM RETURN TYPE  _____________ */
+// T extends (...args: any) => unknown -> constrains to function
+// infer R ? R : any - it will infer type
+type CustomReturnType<T extends (...args: any) => unknown> = T extends (
+  ...args: any
+) => infer R
+  ? R
+  : any;
+
+/* _____________ Test Cases _____________ */
+type CasesReturnType = [
+  Expect<Equal<string, CustomReturnType<() => string>>>,
+  Expect<Equal<123, CustomReturnType<() => 123>>>,
+  Expect<Equal<ComplexObject, CustomReturnType<() => ComplexObject>>>,
+  Expect<Equal<Promise<boolean>, CustomReturnType<() => Promise<boolean>>>>,
+  Expect<Equal<() => "foo", CustomReturnType<() => () => "foo">>>,
+  Expect<Equal<1 | 2, CustomReturnType<typeof fn>>>,
+  Expect<Equal<1 | 2, CustomReturnType<typeof fn1>>>,
+  Expect<Equal<void, CustomReturnType<() => void>>>,
+  Expect<Equal<{}, CustomReturnType<() => {}>>>
+];
+
+type ComplexObject = {
+  a: [12, "foo"];
+  bar: "hello";
+  prev(): number;
+};
+
+const fn = (v: boolean) => (v ? 1 : 2);
+const fn1 = (v: boolean, w: any) => (v ? 1 : 2);
+
+/* _____________ TASK 6 - END _____________ */
+
+/** ########################################################################################################################## */
+
+/* _____________ TASK 7 - CREATE OBJECT FROM TUPLE _____________ */
 
 /*  
     T[number] - T of the index
@@ -309,36 +398,11 @@ type CasesTuple = [
 // @ts-expect-error
 type error = TupleToObject<[[1, 2], {}]>;
 
-/* _____________ TASK 5 - END _____________ */
+/* _____________ TASK 7 - END _____________ */
 
 /** ########################################################################################################################## */
 
-/* _____________ TASK 6 - Get first item type from array_____________ */
-
-/*  
-    T extends [] - if T is empty array return never
-*/
-
-/* solution */
-type First<T extends any[]> = T extends [] ? never : T[0];
-
-/* _____________ Test Cases _____________ */
-type CasesFirst = [
-  Expect<Equal<First<[3, 2, 1]>, 3>>,
-  Expect<Equal<First<[() => 123, { a: string }]>, () => 123>>,
-  Expect<Equal<First<[]>, never>>,
-  Expect<Equal<First<[undefined]>, undefined>>,
-  // @ts-expect-error
-  First<"notArray">,
-  // @ts-expect-error
-  First<{ 0: "arrayLike" }>
-];
-
-/* _____________ TASK 6 - END _____________ */
-
-/** ########################################################################################################################## */
-
-/* _____________ TASK 7 - Get length of the tuple_____________ */
+/* _____________ TASK 8 - GET LENGTH OF TUPLE _____________ */
 
 /*  
     T extends [] - if T is empty array return never
@@ -366,34 +430,48 @@ type CasesLength = [
   Length<"hello world">
 ];
 
-/* _____________ TASK 7 - END _____________ */
+/* _____________ TASK 8 - END _____________ */
 
 /** ########################################################################################################################## */
 
-/* _____________ TASK 8 - Custom Awaited _____________ */
+/* _____________ TASK 9 - GET FIRST ITEM TYPE FROM ARRAY_____________ */
 
-type MyAwaited<T> = T extends PromiseLike<infer U>
-  ? U extends PromiseLike<any>
-    ? MyAwaited<U>
-    : U
-  : never;
+/*  
+    T extends [] - if T is empty array return never
+*/
+
+/* solution */
+type First<T extends any[]> = T extends [] ? never : T[0];
 
 /* _____________ Test Cases _____________ */
-type X = Promise<string>;
-type Y = Promise<{ field: number }>;
-type Z = Promise<Promise<string | number>>;
-type Z1 = Promise<Promise<Promise<string | boolean>>>;
-type T = { then: (onfulfilled: (arg: number) => any) => any };
-
-type CasesAwaited = [
-  Expect<Equal<MyAwaited<X>, string>>,
-  Expect<Equal<MyAwaited<Y>, { field: number }>>,
-  Expect<Equal<MyAwaited<Z>, string | number>>,
-  Expect<Equal<MyAwaited<Z1>, string | boolean>>,
-  Expect<Equal<MyAwaited<T>, number>>
+type CasesFirst = [
+  Expect<Equal<First<[3, 2, 1]>, 3>>,
+  Expect<Equal<First<[() => 123, { a: string }]>, () => 123>>,
+  Expect<Equal<First<[]>, never>>,
+  Expect<Equal<First<[undefined]>, undefined>>,
+  // @ts-expect-error
+  First<"notArray">,
+  // @ts-expect-error
+  First<{ 0: "arrayLike" }>
 ];
 
-/* _____________ TASK 8 - END _____________ */
+/* _____________ TASK 9 - END _____________ */
+
+/** ########################################################################################################################## */
+
+/* _____________ TASK 10 - GET LAST ITEM TYPE FROM ARRAY   _____________ */
+
+type Last<T extends unknown[]> = [unknown, ...T][T["length"]];
+
+/* _____________ Test Cases _____________ */
+
+type CasesLastOfArray = [
+  Expect<Equal<Last<[2]>, 2>>,
+  Expect<Equal<Last<[3, 2, 1]>, 1>>,
+  Expect<Equal<Last<[() => 123, { a: string }]>, { a: string }>>
+];
+
+/* _____________ TASK 10 - END _____________ */
 
 /** ########################################################################################################################## */
 
@@ -401,7 +479,7 @@ type CasesAwaited = [
     [...T, ...U] - we can spreed items in TS same as in JS
 */
 
-/* _____________ TASK 9 - Concat tuple  _____________ */
+/* _____________ TASK 11 - CONCAT TUPLE _____________ */
 
 type Concat<T extends readonly unknown[], U extends readonly unknown[]> = [
   ...T,
@@ -426,11 +504,11 @@ type CasesConcat = [
   Concat<null, undefined>
 ];
 
-/* _____________ TASK 9 - END _____________ */
+/* _____________ TASK 11 - END _____________ */
 
 /** ########################################################################################################################## */
 
-/* _____________ TASK 10 - Custom Includes  _____________ */
+/* _____________ TASK 12 - CUSTOM INCLUDES  _____________ */
 
 type Includes<T extends readonly unknown[], U> = T extends [
   infer First,
@@ -467,11 +545,11 @@ type CasesIncludes = [
   Expect<Equal<Includes<[undefined], undefined>, true>>
 ];
 
-/* _____________ TASK 10 - END _____________ */
+/* _____________ TASK 12 - END _____________ */
 
 /** ########################################################################################################################## */
 
-/* _____________ TASK 11 - Custom Push  _____________ */
+/* _____________ TASK 13 - CUSTOM PUSH _____________ */
 
 type Push<T extends (string | number)[], U> = U extends unknown[]
   ? [...T, ...U]
@@ -487,11 +565,30 @@ type CasesPush = [
   Expect<Equal<Push<["1", 2, "3"], [4, 5]>, ["1", 2, "3", 4, 5]>>
 ];
 
-/* _____________ TASK 11 - END _____________ */
+/* _____________ TASK 13 - END _____________ */
 
 /** ########################################################################################################################## */
 
-/* _____________ TASK 12 - Custom Unshift  _____________ */
+/* _____________ TASK 14 - CUSTOM POP   _____________ */
+
+type Pop<T extends any[]> = T extends []
+  ? []
+  : T extends [...infer I, infer _]
+  ? I
+  : never;
+
+/* _____________ Test Cases _____________ */
+type CasesCustomPop = [
+  Expect<Equal<Pop<[3, 2, 1]>, [3, 2]>>,
+  Expect<Equal<Pop<["a", "b", "c", "d"]>, ["a", "b", "c"]>>,
+  Expect<Equal<Pop<[]>, []>>
+];
+
+/* _____________ TASK 14 - END _____________ */
+
+/** ########################################################################################################################## */
+
+/* _____________ TASK 15 - CUSTOM UNSHIFT  _____________ */
 
 type Unshift<T extends (string | number)[], U> = U extends unknown[]
   ? [...U, ...T]
@@ -508,11 +605,11 @@ type CasesUnshift = [
   Expect<Equal<Unshift<["1", 2, "3"], [0]>, [0, "1", 2, "3"]>>
 ];
 
-/* _____________ TASK 12 - END _____________ */
+/* _____________ TASK 15 - END _____________ */
 
 /** ########################################################################################################################## */
 
-/* _____________ TASK 13 - Parameter type from function return  _____________ */
+/* _____________ TASK 16 - PARAMETER TYPE FROM FUNCTION RETURN _____________ */
 
 type MyParameters<T> = T extends (...any: infer S) => any ? S : any;
 
@@ -527,45 +624,10 @@ type CasesMyParameters = [
   Expect<Equal<MyParameters<typeof baz>, []>>
 ];
 
-/* _____________ TASK 13 - END _____________ */
+/* _____________ TASK 16 - END _____________ */
 
 /** ########################################################################################################################## */
-
-/* _____________ TASK 14 - Custom ReturnType  _____________ */
-// T extends (...args: any) => unknown -> constrains to function
-// infer R ? R : any - it will infer type
-type CustomReturnType<T extends (...args: any) => unknown> = T extends (
-  ...args: any
-) => infer R
-  ? R
-  : any;
-
-/* _____________ Test Cases _____________ */
-type CasesReturnType = [
-  Expect<Equal<string, CustomReturnType<() => string>>>,
-  Expect<Equal<123, CustomReturnType<() => 123>>>,
-  Expect<Equal<ComplexObject, CustomReturnType<() => ComplexObject>>>,
-  Expect<Equal<Promise<boolean>, CustomReturnType<() => Promise<boolean>>>>,
-  Expect<Equal<() => "foo", CustomReturnType<() => () => "foo">>>,
-  Expect<Equal<1 | 2, CustomReturnType<typeof fn>>>,
-  Expect<Equal<1 | 2, CustomReturnType<typeof fn1>>>,
-  Expect<Equal<void, CustomReturnType<() => void>>>,
-  Expect<Equal<{}, CustomReturnType<() => {}>>>
-];
-
-type ComplexObject = {
-  a: [12, "foo"];
-  bar: "hello";
-  prev(): number;
-};
-
-const fn = (v: boolean) => (v ? 1 : 2);
-const fn1 = (v: boolean, w: any) => (v ? 1 : 2);
-
-/* _____________ TASK 14 - END _____________ */
-
-/** ########################################################################################################################## */
-/* _____________ TASK 15 - CUSTOM ERRORS in TypeScript   _____________ */
+/* _____________ TASK 17 - CUSTOM ERRORS IN TypeScript   _____________ */
 
 type CheckForBadArgs<Arg> = Arg extends any[]
   ? "Error: can not check two arrays"
@@ -591,6 +653,120 @@ deepEqualCompare(true, false);
 // deepEqualCompare(undefined, null);
 // deepEqualCompare([], []);
 
-/* _____________ TASK 15 - END _____________ */
+/* _____________ TASK 17 - END _____________ */
+
+/** ########################################################################################################################## */
+/* _____________ TASK 18 - TRIM TEXT  _____________ */
+
+type Space = " " | "\n" | "\t";
+type TrimLeft<S extends string> = S extends `${Space}${infer R}`
+  ? TrimLeft<R>
+  : S;
+type TrimRight<S extends string> = S extends `${infer R}${Space}`
+  ? TrimRight<R>
+  : S;
+
+// type Trim<S extends string> = TrimRight<TrimLeft<S>>;
+type Trim<S extends string> = S extends
+  | `${Space}${infer T}`
+  | `${infer T}${Space}`
+  ? Trim<T>
+  : S;
+/* _____________ Test Cases _____________ */
+type CasesTrim = [
+  Expect<Equal<TrimLeft<"str">, "str">>,
+  Expect<Equal<TrimLeft<" str">, "str">>,
+  Expect<Equal<TrimLeft<"     str">, "str">>,
+  Expect<Equal<TrimLeft<"     str     ">, "str     ">>,
+  Expect<Equal<TrimLeft<"   \n\t foo bar ">, "foo bar ">>,
+  Expect<Equal<TrimLeft<"">, "">>,
+  Expect<Equal<TrimLeft<" \n\t">, "">>,
+
+  Expect<Equal<TrimRight<"str">, "str">>,
+  Expect<Equal<TrimRight<" str">, " str">>,
+  Expect<Equal<TrimRight<"     str">, "     str">>,
+  Expect<Equal<TrimRight<"     str     ">, "     str">>,
+  Expect<Equal<TrimRight<"   \n\t foo bar ">, "   \n\t foo bar">>,
+  Expect<Equal<TrimRight<"">, "">>,
+  Expect<Equal<TrimRight<" \n\t">, "">>,
+
+  Expect<Equal<Trim<"str">, "str">>,
+  Expect<Equal<Trim<" str">, "str">>,
+  Expect<Equal<Trim<"     str">, "str">>,
+  Expect<Equal<Trim<"     str     ">, "str">>,
+  Expect<Equal<Trim<"foo bar">, "foo bar">>,
+  Expect<Equal<Trim<"">, "">>,
+  Expect<Equal<Trim<" \n\t">, "">>
+];
+
+/* _____________ TASK 18 - END _____________ */
+
+/** ########################################################################################################################## */
+/* _____________ TASK 19 - CUSTOM CAPITALIZE  _____________ */
+type MyCapitalize<S extends string> = S extends `${infer first}${infer rest}`
+  ? `${Uppercase<first>}${rest}`
+  : S;
+
+/* _____________ Test Cases _____________ */
+
+type CasesCapitalize = [
+  Expect<Equal<MyCapitalize<"foobar">, "Foobar">>,
+  Expect<Equal<MyCapitalize<"FOOBAR">, "FOOBAR">>,
+  Expect<Equal<MyCapitalize<"foo bar">, "Foo bar">>,
+  Expect<Equal<MyCapitalize<"">, "">>,
+  Expect<Equal<MyCapitalize<"a">, "A">>,
+  Expect<Equal<MyCapitalize<"b">, "B">>,
+  Expect<Equal<MyCapitalize<"c">, "C">>,
+  Expect<Equal<MyCapitalize<"d">, "D">>,
+  Expect<Equal<MyCapitalize<"e">, "E">>,
+  Expect<Equal<MyCapitalize<"f">, "F">>,
+  Expect<Equal<MyCapitalize<"g">, "G">>,
+  Expect<Equal<MyCapitalize<"h">, "H">>,
+  Expect<Equal<MyCapitalize<"i">, "I">>,
+  Expect<Equal<MyCapitalize<"j">, "J">>,
+  Expect<Equal<MyCapitalize<"k">, "K">>,
+  Expect<Equal<MyCapitalize<"l">, "L">>,
+  Expect<Equal<MyCapitalize<"m">, "M">>,
+  Expect<Equal<MyCapitalize<"n">, "N">>,
+  Expect<Equal<MyCapitalize<"o">, "O">>,
+  Expect<Equal<MyCapitalize<"p">, "P">>,
+  Expect<Equal<MyCapitalize<"q">, "Q">>,
+  Expect<Equal<MyCapitalize<"r">, "R">>,
+  Expect<Equal<MyCapitalize<"s">, "S">>,
+  Expect<Equal<MyCapitalize<"t">, "T">>,
+  Expect<Equal<MyCapitalize<"u">, "U">>,
+  Expect<Equal<MyCapitalize<"v">, "V">>,
+  Expect<Equal<MyCapitalize<"w">, "W">>,
+  Expect<Equal<MyCapitalize<"x">, "X">>,
+  Expect<Equal<MyCapitalize<"y">, "Y">>,
+  Expect<Equal<MyCapitalize<"z">, "Z">>
+];
+
+/* _____________ TASK 19 - END _____________ */
+
+/** ########################################################################################################################## */
+/* _____________ TASK 20 - REPLACE STRING  _____________ */
+type Replace<
+  S extends string,
+  From extends string,
+  To extends string
+> = From extends ""
+  ? S
+  : S extends `${infer V}${From}${infer R}`
+  ? `${V}${To}${R}`
+  : S;
+
+/* _____________ Test Cases _____________ */
+
+type CasesReplace = [
+  Expect<Equal<Replace<"foobar", "bar", "foo">, "foofoo">>,
+  Expect<Equal<Replace<"foobarbar", "bar", "foo">, "foofoobar">>,
+  Expect<Equal<Replace<"foobarbar", "", "foo">, "foobarbar">>,
+  Expect<Equal<Replace<"foobarbar", "bar", "">, "foobar">>,
+  Expect<Equal<Replace<"foobarbar", "bra", "foo">, "foobarbar">>,
+  Expect<Equal<Replace<"", "", "">, "">>
+];
+
+/* _____________ TASK 20 - END _____________ */
 
 /** ########################################################################################################################## */
