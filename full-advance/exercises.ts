@@ -1,6 +1,6 @@
 /* _______________ UTILS ______________ */
 
-import type { Alike, Equal, Expect, Prettify } from './index.d';
+import type { Alike, Equal, Expect, Prettify } from "./index.d";
 
 /* _______________ CONTENT ______________ */
 
@@ -25,8 +25,17 @@ import type { Alike, Equal, Expect, Prettify } from './index.d';
 17. CUSTOM ERRORS IN TypeScript 
 18. TRIM TEXT
 19. CUSTOM CAPITALIZE
-20. REPLACE STRING
-21. APPEND ARGUMENT TO FUNCTION PROPS
+20. KEBAB CASE
+21. REPLACE STRING
+22. APPEND ARGUMENT TO FUNCTION PROPS
+23. FLATTEN ARRAY
+24. APPEND PROPERTY TO OBJECT
+25. MERGE OBJECTS
+26. OBJECTS DIFF
+27. DROP CHAR FROM STRING
+28. PICK BY TYPE FROM OBJECT
+29. PARTIAL BY KEY
+30. REQUIRE BY KEY
 */
 /* _______________--------------------------------- ______________ */
 
@@ -39,10 +48,10 @@ type MyPick<T, K extends keyof T> = {
 /* _____________ Test Cases _____________ */
 
 type CasesPick = [
-  Expect<Equal<ExpectedPick1, MyPick<PickExample, 'title'>>>,
-  Expect<Equal<ExpectedPick2, MyPick<PickExample, 'title' | 'completed'>>>,
+  Expect<Equal<ExpectedPick1, MyPick<PickExample, "title">>>,
+  Expect<Equal<ExpectedPick2, MyPick<PickExample, "title" | "completed">>>,
   // @ts-expect-error
-  MyPick<Todo, 'title' | 'completed' | 'invalid'>
+  MyPick<Todo, "title" | "completed" | "invalid">
 ];
 
 type PickExample = {
@@ -77,12 +86,12 @@ type MyExclude<T, K> = T extends K ? never : T;
 /* _____________ Test Cases _____________ */
 
 type CasesExclude = [
-  Expect<Equal<'b' | 'c', MyExclude<ExcludeExample, 'a'>>>,
-  Expect<Equal<'a' | 'c', MyExclude<ExcludeExample, 'b'>>>,
-  Expect<Equal<'a' | 'b' | 'c', MyExclude<ExcludeExample, 'title'>>>
+  Expect<Equal<"b" | "c", MyExclude<ExcludeExample, "a">>>,
+  Expect<Equal<"a" | "c", MyExclude<ExcludeExample, "b">>>,
+  Expect<Equal<"a" | "b" | "c", MyExclude<ExcludeExample, "title">>>
 ];
 
-type ExcludeExample = 'a' | 'b' | 'c';
+type ExcludeExample = "a" | "b" | "c";
 /* _____________ TASK 2 - END _____________ */
 
 /** ########################################################################################################################## */
@@ -97,19 +106,19 @@ type MyOmitWithoutHelpers<T, K extends keyof T> = {
 };
 
 type CasesOmit = [
-  Expect<Equal<ExpectedOmit1, MyOmit<PickExample, 'title'>>>,
-  Expect<Equal<ExpectedOmit2, MyOmit<PickExample, 'title' | 'completed'>>>,
-  Expect<Equal<ExpectedOmit1, MyOmitWithoutHelpers<PickExample, 'title'>>>,
+  Expect<Equal<ExpectedOmit1, MyOmit<PickExample, "title">>>,
+  Expect<Equal<ExpectedOmit2, MyOmit<PickExample, "title" | "completed">>>,
+  Expect<Equal<ExpectedOmit1, MyOmitWithoutHelpers<PickExample, "title">>>,
   Expect<
     Equal<
       ExpectedOmit2,
-      MyOmitWithoutHelpers<PickExample, 'title' | 'completed'>
+      MyOmitWithoutHelpers<PickExample, "title" | "completed">
     >
   >,
   // @ts-expect-error
-  MyOmit<OmitExample, 'title' | 'completed' | 'invalid'>,
+  MyOmit<OmitExample, "title" | "completed" | "invalid">,
   // @ts-expect-error
-  MyOmitWithoutHelpers<OmitExample, 'title' | 'completed' | 'invalid'>
+  MyOmitWithoutHelpers<OmitExample, "title" | "completed" | "invalid">
 ];
 
 type OmitExample = {
@@ -157,19 +166,19 @@ type CasesPartialReadonly = [
   Expect<Alike<MyPartialReadonly<OmitExample>, Readonly<OmitExample>>>,
   Expect<
     Alike<
-      MyPartialReadonly<PartialReadonlyExample, 'title' | 'description'>,
+      MyPartialReadonly<PartialReadonlyExample, "title" | "description">,
       ExpectedPartialReadonly2
     >
   >,
   Expect<
     Alike<
-      MyPartialReadonly<PartialReadonlyExample, 'title' | 'description'>,
+      MyPartialReadonly<PartialReadonlyExample, "title" | "description">,
       ExpectedPartialReadonly2
     >
   >,
   Expect<
     Alike<
-      MyPartialReadonly<PartialReadonlyExample, 'description'>,
+      MyPartialReadonly<PartialReadonlyExample, "description">,
       ExpectedPartialReadonly2
     >
   >,
@@ -181,7 +190,7 @@ type CasesPartialReadonly = [
     Alike<
       MyPartialReadonlyWithoutHelpers<
         PartialReadonlyExample,
-        'title' | 'description'
+        "title" | "description"
       >,
       ExpectedPartialReadonly2
     >
@@ -190,23 +199,23 @@ type CasesPartialReadonly = [
     Alike<
       MyPartialReadonlyWithoutHelpers<
         PartialReadonlyExample,
-        'title' | 'description'
+        "title" | "description"
       >,
       ExpectedPartialReadonly2
     >
   >,
   Expect<
     Alike<
-      MyPartialReadonlyWithoutHelpers<PartialReadonlyExample, 'description'>,
+      MyPartialReadonlyWithoutHelpers<PartialReadonlyExample, "description">,
       ExpectedPartialReadonly2
     >
   >
 ];
 
 // @ts-expect-error
-type e1 = MyPartialReadonly<OmitExample, 'title' | 'invalid'>;
+type e1 = MyPartialReadonly<OmitExample, "title" | "invalid">;
 // @ts-expect-error
-type e2 = MyPartialReadonlyWithoutHelpers<OmitExample, 'title' | 'invalid'>;
+type e2 = MyPartialReadonlyWithoutHelpers<OmitExample, "title" | "invalid">;
 
 interface PartialReadonlyExample {
   readonly title: string;
@@ -243,14 +252,14 @@ type DeepReadonlyExample1 = {
       g: {
         h: {
           i: true;
-          j: 'string';
+          j: "string";
         };
-        k: 'hello';
+        k: "hello";
       };
       l: [
-        'hi',
+        "hi",
         {
-          m: ['hey'];
+          m: ["hey"];
         }
       ];
     };
@@ -268,14 +277,14 @@ type ExpectedDeepReadonly1 = {
       readonly g: {
         readonly h: {
           readonly i: true;
-          readonly j: 'string';
+          readonly j: "string";
         };
-        readonly k: 'hello';
+        readonly k: "hello";
       };
       readonly l: readonly [
-        'hi',
+        "hi",
         {
-          readonly m: readonly ['hey'];
+          readonly m: readonly ["hey"];
         }
       ];
     };
@@ -328,7 +337,7 @@ type CasesReturnType = [
   Expect<Equal<123, CustomReturnType<() => 123>>>,
   Expect<Equal<ComplexObject, CustomReturnType<() => ComplexObject>>>,
   Expect<Equal<Promise<boolean>, CustomReturnType<() => Promise<boolean>>>>,
-  Expect<Equal<() => 'foo', CustomReturnType<() => () => 'foo'>>>,
+  Expect<Equal<() => "foo", CustomReturnType<() => () => "foo">>>,
   Expect<Equal<1 | 2, CustomReturnType<typeof fn>>>,
   Expect<Equal<1 | 2, CustomReturnType<typeof fn1>>>,
   Expect<Equal<void, CustomReturnType<() => void>>>,
@@ -336,8 +345,8 @@ type CasesReturnType = [
 ];
 
 type ComplexObject = {
-  a: [12, 'foo'];
-  bar: 'hello';
+  a: [12, "foo"];
+  bar: "hello";
   prev(): number;
 };
 
@@ -362,22 +371,22 @@ type TupleToObject<T extends readonly PropertyKey[]> = {
 };
 /* _____________ Test Cases _____________ */
 
-const tuple = ['tesla', 'model 3', 'model X', 'model Y'] as const;
+const tuple = ["tesla", "model 3", "model X", "model Y"] as const;
 const tupleNumber = [1, 2, 3, 4] as const;
 const sym1 = Symbol(1);
 const sym2 = Symbol(2);
 const tupleSymbol = [sym1, sym2] as const;
-const tupleMix = [1, '2', 3, '4', sym1] as const;
+const tupleMix = [1, "2", 3, "4", sym1] as const;
 
 type CasesTuple = [
   Expect<
     Equal<
       TupleToObject<typeof tuple>,
       {
-        tesla: 'tesla';
-        'model 3': 'model 3';
-        'model X': 'model X';
-        'model Y': 'model Y';
+        tesla: "tesla";
+        "model 3": "model 3";
+        "model X": "model X";
+        "model Y": "model Y";
       }
     >
   >,
@@ -391,13 +400,30 @@ type CasesTuple = [
   Expect<
     Equal<
       TupleToObject<typeof tupleMix>,
-      { 1: 1; '2': '2'; 3: 3; '4': '4'; [sym1]: typeof sym1 }
+      { 1: 1; "2": "2"; 3: 3; "4": "4"; [sym1]: typeof sym1 }
     >
   >
 ];
 
 // @ts-expect-error
 type error = TupleToObject<[[1, 2], {}]>;
+
+type TupleToNestedObject<T, U> = T extends [infer F extends string, ...infer R]
+  ? Record<F, TupleToNestedObject<R, U>>
+  : U;
+
+/* _____________ Test Cases _____________ */
+type CasesTupleToNestedObject = [
+  Expect<Equal<TupleToNestedObject<["a"], string>, { a: string }>>,
+  Expect<Equal<TupleToNestedObject<["a", "b"], number>, { a: { b: number } }>>,
+  Expect<
+    Equal<
+      TupleToNestedObject<["a", "b", "c"], boolean>,
+      { a: { b: { c: boolean } } }
+    >
+  >,
+  Expect<Equal<TupleToNestedObject<[], boolean>, boolean>>
+];
 
 /* _____________ TASK 7 - END _____________ */
 
@@ -410,16 +436,16 @@ type error = TupleToObject<[[1, 2], {}]>;
 */
 
 /* solution */
-type Length<T extends readonly string[]> = T['length'];
+type Length<T extends readonly string[]> = T["length"];
 
 /* _____________ Test Cases _____________ */
-const tesla = ['tesla', 'model 3', 'model X', 'model Y'] as const;
+const tesla = ["tesla", "model 3", "model X", "model Y"] as const;
 const spaceX = [
-  'FALCON 9',
-  'FALCON HEAVY',
-  'DRAGON',
-  'STARSHIP',
-  'HUMAN SPACEFLIGHT',
+  "FALCON 9",
+  "FALCON HEAVY",
+  "DRAGON",
+  "STARSHIP",
+  "HUMAN SPACEFLIGHT",
 ] as const;
 
 type CasesLength = [
@@ -428,7 +454,7 @@ type CasesLength = [
   // @ts-expect-error
   Length<5>,
   // @ts-expect-error
-  Length<'hello world'>
+  Length<"hello world">
 ];
 
 /* _____________ TASK 8 - END _____________ */
@@ -451,9 +477,9 @@ type CasesFirst = [
   Expect<Equal<First<[]>, never>>,
   Expect<Equal<First<[undefined]>, undefined>>,
   // @ts-expect-error
-  First<'notArray'>,
+  First<"notArray">,
   // @ts-expect-error
-  First<{ 0: 'arrayLike' }>
+  First<{ 0: "arrayLike" }>
 ];
 
 /* _____________ TASK 9 - END _____________ */
@@ -497,8 +523,8 @@ type CasesConcat = [
   Expect<Equal<Concat<[1, 2], [3, 4]>, [1, 2, 3, 4]>>,
   Expect<
     Equal<
-      Concat<['1', 2, '3'], [false, boolean, '4']>,
-      ['1', 2, '3', false, boolean, '4']
+      Concat<["1", 2, "3"], [false, boolean, "4"]>,
+      ["1", 2, "3", false, boolean, "4"]
     >
   >,
   // @ts-expect-error
@@ -523,21 +549,21 @@ type Includes<T extends readonly unknown[], U> = T extends [
 /* _____________ Test Cases _____________ */
 type CasesIncludes = [
   Expect<
-    Equal<Includes<['Kars', 'Esidisi', 'Wamuu', 'Santana'], 'Kars'>, true>
+    Equal<Includes<["Kars", "Esidisi", "Wamuu", "Santana"], "Kars">, true>
   >,
   Expect<
-    Equal<Includes<['Kars', 'Esidisi', 'Wamuu', 'Santana'], 'Dio'>, false>
+    Equal<Includes<["Kars", "Esidisi", "Wamuu", "Santana"], "Dio">, false>
   >,
   Expect<Equal<Includes<[1, 2, 3, 5, 6, 7], 7>, true>>,
   Expect<Equal<Includes<[1, 2, 3, 5, 6, 7], 4>, false>>,
   Expect<Equal<Includes<[1, 2, 3], 2>, true>>,
   Expect<Equal<Includes<[1, 2, 3], 1>, true>>,
-  Expect<Equal<Includes<[{}], { a: 'A' }>, false>>,
+  Expect<Equal<Includes<[{}], { a: "A" }>, false>>,
   Expect<Equal<Includes<[boolean, 2, 3, 5, 6, 7], false>, false>>,
   Expect<Equal<Includes<[true, 2, 3, 5, 6, 7], boolean>, false>>,
   Expect<Equal<Includes<[false, 2, 3, 5, 6, 7], false>, true>>,
-  Expect<Equal<Includes<[{ a: 'A' }], { readonly a: 'A' }>, false>>,
-  Expect<Equal<Includes<[{ readonly a: 'A' }], { a: 'A' }>, false>>,
+  Expect<Equal<Includes<[{ a: "A" }], { readonly a: "A" }>, false>>,
+  Expect<Equal<Includes<[{ readonly a: "A" }], { a: "A" }>, false>>,
   Expect<Equal<Includes<[1], 1 | 2>, false>>,
   Expect<Equal<Includes<[1 | 2], 1>, false>>,
   Expect<Equal<Includes<[null], undefined>, false>>,
@@ -561,9 +587,9 @@ type Push<T extends (string | number)[], U> = U extends unknown[]
 /* _____________ Test Cases _____________ */
 type CasesPush = [
   Expect<Equal<Push<[], 1>, [1]>>,
-  Expect<Equal<Push<[1, 2], '3'>, [1, 2, '3']>>,
-  Expect<Equal<Push<['1', 2, '3'], boolean>, ['1', 2, '3', boolean]>>,
-  Expect<Equal<Push<['1', 2, '3'], [4, 5]>, ['1', 2, '3', 4, 5]>>
+  Expect<Equal<Push<[1, 2], "3">, [1, 2, "3"]>>,
+  Expect<Equal<Push<["1", 2, "3"], boolean>, ["1", 2, "3", boolean]>>,
+  Expect<Equal<Push<["1", 2, "3"], [4, 5]>, ["1", 2, "3", 4, 5]>>
 ];
 
 /* _____________ TASK 13 - END _____________ */
@@ -581,7 +607,7 @@ type Pop<T extends any[]> = T extends []
 /* _____________ Test Cases _____________ */
 type CasesCustomPop = [
   Expect<Equal<Pop<[3, 2, 1]>, [3, 2]>>,
-  Expect<Equal<Pop<['a', 'b', 'c', 'd']>, ['a', 'b', 'c']>>,
+  Expect<Equal<Pop<["a", "b", "c", "d"]>, ["a", "b", "c"]>>,
   Expect<Equal<Pop<[]>, []>>
 ];
 
@@ -602,8 +628,8 @@ type Unshift<T extends (string | number)[], U> = U extends unknown[]
 type CasesUnshift = [
   Expect<Equal<Unshift<[], 1>, [1]>>,
   Expect<Equal<Unshift<[1, 2], 0>, [0, 1, 2]>>,
-  Expect<Equal<Unshift<['1', 2, '3'], boolean>, [boolean, '1', 2, '3']>>,
-  Expect<Equal<Unshift<['1', 2, '3'], [0]>, [0, '1', 2, '3']>>
+  Expect<Equal<Unshift<["1", 2, "3"], boolean>, [boolean, "1", 2, "3"]>>,
+  Expect<Equal<Unshift<["1", 2, "3"], [0]>, [0, "1", 2, "3"]>>
 ];
 
 /* _____________ TASK 15 - END _____________ */
@@ -616,12 +642,12 @@ type MyParameters<T> = T extends (...any: infer S) => any ? S : any;
 
 /* _____________ Test Cases _____________ */
 function foo(arg1: string, arg2: number): void {}
-function bar(arg1: boolean, arg2: { a: 'A' }): void {}
+function bar(arg1: boolean, arg2: { a: "A" }): void {}
 function baz(): void {}
 
 type CasesMyParameters = [
   Expect<Equal<MyParameters<typeof foo>, [string, number]>>,
-  Expect<Equal<MyParameters<typeof bar>, [boolean, { a: 'A' }]>>,
+  Expect<Equal<MyParameters<typeof bar>, [boolean, { a: "A" }]>>,
   Expect<Equal<MyParameters<typeof baz>, []>>
 ];
 
@@ -631,10 +657,10 @@ type CasesMyParameters = [
 /* _____________ TASK 17 - CUSTOM ERRORS IN TypeScript   _____________ */
 
 type CheckForBadArgs<Arg> = Arg extends any[]
-  ? 'Error: can not check two arrays'
+  ? "Error: can not check two arrays"
   : Arg extends string | boolean | number
   ? Arg
-  : 'Error can not check object';
+  : "Error can not check object";
 
 const deepEqualCompare = <Arg>(
   a: CheckForBadArgs<Arg>,
@@ -646,7 +672,7 @@ const deepEqualCompare = <Arg>(
 /* _____________ Test Cases _____________ */
 
 deepEqualCompare(1, 1);
-deepEqualCompare('a', 'b');
+deepEqualCompare("a", "b");
 deepEqualCompare(true, false);
 // This will throw runtime error
 // deepEqualCompare({ a: "a" }, { b: "b" });
@@ -659,7 +685,7 @@ deepEqualCompare(true, false);
 /** ########################################################################################################################## */
 /* _____________ TASK 18 - TRIM TEXT  _____________ */
 
-type Space = ' ' | '\n' | '\t';
+type Space = " " | "\n" | "\t";
 type TrimLeft<S extends string> = S extends `${Space}${infer R}`
   ? TrimLeft<R>
   : S;
@@ -675,29 +701,29 @@ type Trim<S extends string> = S extends
   : S;
 /* _____________ Test Cases _____________ */
 type CasesTrim = [
-  Expect<Equal<TrimLeft<'str'>, 'str'>>,
-  Expect<Equal<TrimLeft<' str'>, 'str'>>,
-  Expect<Equal<TrimLeft<'     str'>, 'str'>>,
-  Expect<Equal<TrimLeft<'     str     '>, 'str     '>>,
-  Expect<Equal<TrimLeft<'   \n\t foo bar '>, 'foo bar '>>,
-  Expect<Equal<TrimLeft<''>, ''>>,
-  Expect<Equal<TrimLeft<' \n\t'>, ''>>,
+  Expect<Equal<TrimLeft<"str">, "str">>,
+  Expect<Equal<TrimLeft<" str">, "str">>,
+  Expect<Equal<TrimLeft<"     str">, "str">>,
+  Expect<Equal<TrimLeft<"     str     ">, "str     ">>,
+  Expect<Equal<TrimLeft<"   \n\t foo bar ">, "foo bar ">>,
+  Expect<Equal<TrimLeft<"">, "">>,
+  Expect<Equal<TrimLeft<" \n\t">, "">>,
 
-  Expect<Equal<TrimRight<'str'>, 'str'>>,
-  Expect<Equal<TrimRight<' str'>, ' str'>>,
-  Expect<Equal<TrimRight<'     str'>, '     str'>>,
-  Expect<Equal<TrimRight<'     str     '>, '     str'>>,
-  Expect<Equal<TrimRight<'   \n\t foo bar '>, '   \n\t foo bar'>>,
-  Expect<Equal<TrimRight<''>, ''>>,
-  Expect<Equal<TrimRight<' \n\t'>, ''>>,
+  Expect<Equal<TrimRight<"str">, "str">>,
+  Expect<Equal<TrimRight<" str">, " str">>,
+  Expect<Equal<TrimRight<"     str">, "     str">>,
+  Expect<Equal<TrimRight<"     str     ">, "     str">>,
+  Expect<Equal<TrimRight<"   \n\t foo bar ">, "   \n\t foo bar">>,
+  Expect<Equal<TrimRight<"">, "">>,
+  Expect<Equal<TrimRight<" \n\t">, "">>,
 
-  Expect<Equal<Trim<'str'>, 'str'>>,
-  Expect<Equal<Trim<' str'>, 'str'>>,
-  Expect<Equal<Trim<'     str'>, 'str'>>,
-  Expect<Equal<Trim<'     str     '>, 'str'>>,
-  Expect<Equal<Trim<'foo bar'>, 'foo bar'>>,
-  Expect<Equal<Trim<''>, ''>>,
-  Expect<Equal<Trim<' \n\t'>, ''>>
+  Expect<Equal<Trim<"str">, "str">>,
+  Expect<Equal<Trim<" str">, "str">>,
+  Expect<Equal<Trim<"     str">, "str">>,
+  Expect<Equal<Trim<"     str     ">, "str">>,
+  Expect<Equal<Trim<"foo bar">, "foo bar">>,
+  Expect<Equal<Trim<"">, "">>,
+  Expect<Equal<Trim<" \n\t">, "">>
 ];
 
 /* _____________ TASK 18 - END _____________ */
@@ -711,47 +737,72 @@ type MyCapitalize<S extends string> = S extends `${infer first}${infer rest}`
 /* _____________ Test Cases _____________ */
 
 type CasesCapitalize = [
-  Expect<Equal<MyCapitalize<'foobar'>, 'Foobar'>>,
-  Expect<Equal<MyCapitalize<'FOOBAR'>, 'FOOBAR'>>,
-  Expect<Equal<MyCapitalize<'foo bar'>, 'Foo bar'>>,
-  Expect<Equal<MyCapitalize<''>, ''>>,
-  Expect<Equal<MyCapitalize<'a'>, 'A'>>,
-  Expect<Equal<MyCapitalize<'b'>, 'B'>>,
-  Expect<Equal<MyCapitalize<'c'>, 'C'>>,
-  Expect<Equal<MyCapitalize<'d'>, 'D'>>,
-  Expect<Equal<MyCapitalize<'e'>, 'E'>>,
-  Expect<Equal<MyCapitalize<'f'>, 'F'>>,
-  Expect<Equal<MyCapitalize<'g'>, 'G'>>,
-  Expect<Equal<MyCapitalize<'h'>, 'H'>>,
-  Expect<Equal<MyCapitalize<'i'>, 'I'>>,
-  Expect<Equal<MyCapitalize<'j'>, 'J'>>,
-  Expect<Equal<MyCapitalize<'k'>, 'K'>>,
-  Expect<Equal<MyCapitalize<'l'>, 'L'>>,
-  Expect<Equal<MyCapitalize<'m'>, 'M'>>,
-  Expect<Equal<MyCapitalize<'n'>, 'N'>>,
-  Expect<Equal<MyCapitalize<'o'>, 'O'>>,
-  Expect<Equal<MyCapitalize<'p'>, 'P'>>,
-  Expect<Equal<MyCapitalize<'q'>, 'Q'>>,
-  Expect<Equal<MyCapitalize<'r'>, 'R'>>,
-  Expect<Equal<MyCapitalize<'s'>, 'S'>>,
-  Expect<Equal<MyCapitalize<'t'>, 'T'>>,
-  Expect<Equal<MyCapitalize<'u'>, 'U'>>,
-  Expect<Equal<MyCapitalize<'v'>, 'V'>>,
-  Expect<Equal<MyCapitalize<'w'>, 'W'>>,
-  Expect<Equal<MyCapitalize<'x'>, 'X'>>,
-  Expect<Equal<MyCapitalize<'y'>, 'Y'>>,
-  Expect<Equal<MyCapitalize<'z'>, 'Z'>>
+  Expect<Equal<MyCapitalize<"foobar">, "Foobar">>,
+  Expect<Equal<MyCapitalize<"FOOBAR">, "FOOBAR">>,
+  Expect<Equal<MyCapitalize<"foo bar">, "Foo bar">>,
+  Expect<Equal<MyCapitalize<"">, "">>,
+  Expect<Equal<MyCapitalize<"a">, "A">>,
+  Expect<Equal<MyCapitalize<"b">, "B">>,
+  Expect<Equal<MyCapitalize<"c">, "C">>,
+  Expect<Equal<MyCapitalize<"d">, "D">>,
+  Expect<Equal<MyCapitalize<"e">, "E">>,
+  Expect<Equal<MyCapitalize<"f">, "F">>,
+  Expect<Equal<MyCapitalize<"g">, "G">>,
+  Expect<Equal<MyCapitalize<"h">, "H">>,
+  Expect<Equal<MyCapitalize<"i">, "I">>,
+  Expect<Equal<MyCapitalize<"j">, "J">>,
+  Expect<Equal<MyCapitalize<"k">, "K">>,
+  Expect<Equal<MyCapitalize<"l">, "L">>,
+  Expect<Equal<MyCapitalize<"m">, "M">>,
+  Expect<Equal<MyCapitalize<"n">, "N">>,
+  Expect<Equal<MyCapitalize<"o">, "O">>,
+  Expect<Equal<MyCapitalize<"p">, "P">>,
+  Expect<Equal<MyCapitalize<"q">, "Q">>,
+  Expect<Equal<MyCapitalize<"r">, "R">>,
+  Expect<Equal<MyCapitalize<"s">, "S">>,
+  Expect<Equal<MyCapitalize<"t">, "T">>,
+  Expect<Equal<MyCapitalize<"u">, "U">>,
+  Expect<Equal<MyCapitalize<"v">, "V">>,
+  Expect<Equal<MyCapitalize<"w">, "W">>,
+  Expect<Equal<MyCapitalize<"x">, "X">>,
+  Expect<Equal<MyCapitalize<"y">, "Y">>,
+  Expect<Equal<MyCapitalize<"z">, "Z">>
 ];
 
 /* _____________ TASK 19 - END _____________ */
 
 /** ########################################################################################################################## */
-/* _____________ TASK 20 - REPLACE STRING  _____________ */
+/* _____________ TASK 20 - KEBAB CASE  _____________ */
+
+type KebabCase<S extends string> = S extends `${infer S1}${infer S2}`
+  ? S2 extends Uncapitalize<S2>
+    ? `${Uncapitalize<S1>}${KebabCase<S2>}`
+    : `${Uncapitalize<S1>}-${KebabCase<S2>}`
+  : S;
+
+/* _____________ Test Cases _____________ */
+
+type CasesKebab = [
+  Expect<Equal<KebabCase<"FooBarBaz">, "foo-bar-baz">>,
+  Expect<Equal<KebabCase<"fooBarBaz">, "foo-bar-baz">>,
+  Expect<Equal<KebabCase<"foo-bar">, "foo-bar">>,
+  Expect<Equal<KebabCase<"foo_bar">, "foo_bar">>,
+  Expect<Equal<KebabCase<"Foo-Bar">, "foo--bar">>,
+  Expect<Equal<KebabCase<"ABC">, "a-b-c">>,
+  Expect<Equal<KebabCase<"-">, "-">>,
+  Expect<Equal<KebabCase<"">, "">>,
+  Expect<Equal<KebabCase<"😎">, "😎">>
+];
+
+/* _____________ TASK 20 - END _____________ */
+
+/** ########################################################################################################################## */
+/* _____________ TASK 21 - REPLACE STRING  _____________ */
 type Replace<
   S extends string,
   From extends string,
   To extends string
-> = From extends ''
+> = From extends ""
   ? S
   : S extends `${infer V}${From}${infer R}`
   ? `${V}${To}${R}`
@@ -760,18 +811,18 @@ type Replace<
 /* _____________ Test Cases _____________ */
 
 type CasesReplace = [
-  Expect<Equal<Replace<'foobar', 'bar', 'foo'>, 'foofoo'>>,
-  Expect<Equal<Replace<'foobarbar', 'bar', 'foo'>, 'foofoobar'>>,
-  Expect<Equal<Replace<'foobarbar', '', 'foo'>, 'foobarbar'>>,
-  Expect<Equal<Replace<'foobarbar', 'bar', ''>, 'foobar'>>,
-  Expect<Equal<Replace<'foobarbar', 'bra', 'foo'>, 'foobarbar'>>,
-  Expect<Equal<Replace<'', '', ''>, ''>>
+  Expect<Equal<Replace<"foobar", "bar", "foo">, "foofoo">>,
+  Expect<Equal<Replace<"foobarbar", "bar", "foo">, "foofoobar">>,
+  Expect<Equal<Replace<"foobarbar", "", "foo">, "foobarbar">>,
+  Expect<Equal<Replace<"foobarbar", "bar", "">, "foobar">>,
+  Expect<Equal<Replace<"foobarbar", "bra", "foo">, "foobarbar">>,
+  Expect<Equal<Replace<"", "", "">, "">>
 ];
 
-/* _____________ TASK 20 - END _____________ */
+/* _____________ TASK 21 - END _____________ */
 
 /** ########################################################################################################################## */
-/* _____________ TASK 21 - APPEND ARGUMENT TO FUNCTION PROPS  _____________ */
+/* _____________ TASK 22 - APPEND ARGUMENT TO FUNCTION PROPS  _____________ */
 
 type AppendArgument<Fn extends (...args: any[]) => any, A> = Fn extends (
   ...args: infer R
@@ -786,12 +837,279 @@ type Result1 = (a: number, b: string, x: boolean) => number;
 type Case2 = AppendArgument<() => void, undefined>;
 type Result2 = (x: undefined) => void;
 
-type cases = [
+type CasesAppend = [
   Expect<Equal<Case1, Result1>>,
   Expect<Equal<Case2, Result2>>,
   // @ts-expect-error
   AppendArgument<unknown, undefined>
 ];
-/* _____________ TASK 21 - END _____________ */
+/* _____________ TASK 22 - END _____________ */
+
+/** ########################################################################################################################## */
+/* _____________ TASK 23 - FLATTEN ARRAY  _____________ */
+
+type Flatten<S extends any[], T extends any[] = []> = S extends [
+  infer X,
+  ...infer Y
+]
+  ? X extends any[]
+    ? Flatten<[...X, ...Y], T>
+    : Flatten<[...Y], [...T, X]>
+  : T;
+
+/* _____________ Test Cases _____________ */
+type CasesFlatten = [
+  Expect<Equal<Flatten<[]>, []>>,
+  Expect<Equal<Flatten<[1, 2, 3, 4]>, [1, 2, 3, 4]>>,
+  Expect<Equal<Flatten<[1, [2]]>, [1, 2]>>,
+  Expect<Equal<Flatten<[1, 2, [3, 4], [[[5]]]]>, [1, 2, 3, 4, 5]>>,
+  Expect<
+    Equal<
+      Flatten<[{ foo: "bar"; 2: 10 }, "foobar"]>,
+      [{ foo: "bar"; 2: 10 }, "foobar"]
+    >
+  >
+];
+
+// @ts-expect-error
+type error = Flatten<"1">;
+/* _____________ TASK 23 - END _____________ */
+
+/** ########################################################################################################################## */
+/* _____________ TASK 24 - APPEND PROPERTY TO OBJECT  _____________ */
+type Flat<T> = {
+  [K in keyof T]: T[K];
+};
+
+type AppendToObject<T, U extends PropertyKey, V> = Flat<T & Record<U, V>>;
+
+/* _____________ Test Cases _____________ */
+
+type test1 = {
+  key: "cat";
+  value: "green";
+};
+
+type testExpect1 = {
+  key: "cat";
+  value: "green";
+  home: boolean;
+};
+
+type test2 = {
+  key: "dog" | undefined;
+  value: "white";
+  sun: true;
+};
+
+type testExpect2 = {
+  key: "dog" | undefined;
+  value: "white";
+  sun: true;
+  home: 1;
+};
+
+type test3 = {
+  key: "cow";
+  value: "yellow";
+  sun: false;
+};
+
+type testExpect3 = {
+  key: "cow";
+  value: "yellow";
+  sun: false;
+  moon: false | undefined;
+};
+
+type CasesAppendToObject = [
+  Expect<Equal<AppendToObject<test1, "home", boolean>, testExpect1>>,
+  Expect<Equal<AppendToObject<test2, "home", 1>, testExpect2>>,
+  Expect<Equal<AppendToObject<test3, "moon", false | undefined>, testExpect3>>
+];
+/* _____________ TASK 24 - END _____________ */
+
+/** ########################################################################################################################## */
+
+/* _____________ TASK 25 - MERGE OBJECTS  _____________ */
+
+// Flat is build in task above
+type MyMerge<F, S> = Flat<Omit<F, keyof S> & S>;
+
+/* _____________ Test Cases _____________ */
+
+type Foo = {
+  a: number;
+  b: string;
+};
+type Bar = {
+  b: number;
+  c: boolean;
+};
+
+type CasesMerge = [
+  Expect<
+    Equal<
+      MyMerge<Foo, Bar>,
+      {
+        a: number;
+        b: number;
+        c: boolean;
+      }
+    >
+  >
+];
+
+/* _____________ TASK 25 - END _____________ */
+
+/** ########################################################################################################################## */
+/* _____________ TASK 26 - OBJECTS DIFF  _____________ */
+
+// Flat is done in task 24
+type Diff<O, O1> = Flat<Omit<O1, keyof O> & Omit<O, keyof O1>>;
+
+/* _____________ Test Cases _____________ */
+
+type Obj1 = {
+  name: string;
+  age: string;
+};
+type Obj2 = {
+  name: string;
+  age: string;
+  gender: number;
+};
+type Coo = {
+  name: string;
+  gender: number;
+};
+
+type cases = [
+  Expect<Equal<Diff<Obj1, Obj2>, { gender: number }>>,
+  Expect<Equal<Diff<Obj2, Obj1>, { gender: number }>>,
+  Expect<Equal<Diff<Obj1, Coo>, { age: string; gender: number }>>,
+  Expect<Equal<Diff<Coo, Obj1>, { age: string; gender: number }>>
+];
+
+/* _____________ TASK 26 - END _____________ */
+
+/** ########################################################################################################################## */
+/* _____________ TASK 27 - DROP CHAR FROM STRING  _____________ */
+
+type DropChar<S, C extends string> = S extends `${infer L}${C}${infer R}`
+  ? DropChar<`${L}${R}`, C>
+  : S;
+
+/* _____________ Test Cases _____________ */
+
+type CasesDropChar = [
+  // @ts-expect-error
+  Expect<Equal<DropChar<"butter fly!", "">, "butterfly!">>,
+  Expect<Equal<DropChar<"butter fly!", " ">, "butterfly!">>,
+  Expect<Equal<DropChar<"butter fly!", "!">, "butter fly">>,
+  Expect<Equal<DropChar<"    butter fly!        ", " ">, "butterfly!">>,
+  Expect<Equal<DropChar<" b u t t e r f l y ! ", " ">, "butterfly!">>,
+  Expect<Equal<DropChar<" b u t t e r f l y ! ", "b">, "  u t t e r f l y ! ">>,
+  Expect<Equal<DropChar<" b u t t e r f l y ! ", "t">, " b u   e r f l y ! ">>
+];
+/* _____________ TASK 27 - END _____________ */
+
+/** ########################################################################################################################## */
+/* _____________ TASK 28 - PICK BY TYPE FROM OBJECT  _____________ */
+
+type PickByType<T, U> = {
+  [TKey in keyof T as T[TKey] extends U ? TKey : never]: T[TKey];
+};
+
+/* _____________ Test Cases _____________ */
+interface Model {
+  name: string;
+  count: number;
+  isReadonly: boolean;
+  isEnable: boolean;
+}
+
+type CasesPickByType = [
+  Expect<
+    Equal<
+      PickByType<Model, boolean>,
+      { isReadonly: boolean; isEnable: boolean }
+    >
+  >,
+  Expect<Equal<PickByType<Model, string>, { name: string }>>,
+  Expect<Equal<PickByType<Model, number>, { count: number }>>
+];
+
+/* _____________ TASK 28 - END _____________ */
+
+/** ########################################################################################################################## */
+/* _____________ TASK 29 - PARTIAL BY KEY  _____________ */
+type PartialByKeys<T, K extends keyof T = keyof T> = Flat<
+  Omit<T, K> & { [P in K]+?: T[P] }
+>;
+
+/* _____________ Test Cases _____________ */
+
+interface User {
+  name: string;
+  age: number;
+  address: string;
+}
+
+interface UserPartialName {
+  name?: string;
+  age: number;
+  address: string;
+}
+
+interface UserPartialNameAndAge {
+  name?: string;
+  age?: number;
+  address: string;
+}
+
+type CasesPartialByKeys = [
+  Expect<Equal<PartialByKeys<User, "name">, UserPartialName>>,
+  Expect<Equal<PartialByKeys<User, "name" | "age">, UserPartialNameAndAge>>,
+  Expect<Equal<PartialByKeys<User>, Partial<User>>>,
+  // @ts-expect-error
+  Expect<Equal<PartialByKeys<User, "name" | "unknown">, UserPartialName>>
+];
+
+/* _____________ TASK 29 - END _____________ */
+
+/** ########################################################################################################################## */
+/* _____________ TASK 30 - REQUIRE BY KEY  _____________ */
+type RequiredByKeys<T, K extends keyof T = keyof T> = Flat<
+  Omit<T, K> & { [P in K]-?: T[P] }
+>;
+
+/* _____________ Test Cases _____________ */
+interface UserR {
+  name?: string;
+  age?: number;
+  address?: string;
+}
+
+interface UserRequiredName {
+  name: string;
+  age?: number;
+  address?: string;
+}
+
+interface UserRequiredNameAndAge {
+  name: string;
+  age: number;
+  address?: string;
+}
+
+type CasesRequiredByKeys = [
+  Expect<Equal<RequiredByKeys<UserR, "name">, UserRequiredName>>,
+  Expect<Equal<RequiredByKeys<UserR, "name" | "age">, UserRequiredNameAndAge>>,
+  Expect<Equal<RequiredByKeys<User>, Required<User>>>,
+  // @ts-expect-error
+  Expect<Equal<RequiredByKeys<User, "name" | "unknown">, UserRequiredName>>
+];
+/* _____________ TASK 30 - END _____________ */
 
 /** ########################################################################################################################## */

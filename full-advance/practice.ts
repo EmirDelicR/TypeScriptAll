@@ -18,8 +18,8 @@ const person: Store<State> = {};
 // 2. Remove object prefix
 
 type ApiData = {
-  'maps:log': string;
-  'maps:lat': string;
+  "maps:log": string;
+  "maps:lat": string;
 };
 
 type RemovePrefixFromObject<TObj> = {};
@@ -33,7 +33,7 @@ type PersonKeyofExample = {
 };
 
 const personKeyofExample = {
-  name: 'John',
+  name: "John",
   age: 24,
 };
 
@@ -50,7 +50,7 @@ const DeepReturnExample = {
     b: 2,
   },
   bar: {
-    c: 'cool',
+    c: "cool",
     d: 2,
   },
 };
@@ -63,7 +63,7 @@ const getDeepValue = <TObj, TKey, TKey1>(
   return data[key1][key2];
 };
 // Should return only type of c and pass only c | d as param
-const itemExample = getDeepValue(DeepReturnExample, 'bar', 'd');
+const itemExample = getDeepValue(DeepReturnExample, "bar", "d");
 
 /** ################################################################################################################################################################################################# */
 /** 5. Extract values of specific key */
@@ -72,14 +72,15 @@ type ExtractExample = {
   a1: number;
   b: boolean;
 };
+
 type ObjectOfKeysStartingWith = {};
 type ValuesOfKeysStartingWith = {};
 
 // {a: string, a1: number}
-type NewExtractedType = ObjectOfKeysStartingWith<ExtractExample, 'a'>;
+type NewExtractedType = ObjectOfKeysStartingWith<ExtractExample, "a">;
 
 // string | number
-type NewExtractedUnion = ValuesOfKeysStartingWith<ExtractExample, 'a', 'a1'>;
+type NewExtractedUnion = ValuesOfKeysStartingWith<ExtractExample, "a", "a1">;
 
 /** ################################################################################################################################################################################################# */
 /** 6. Remove keys from object */
@@ -88,11 +89,10 @@ const makeKeyRemover = (keys: []) => (obj) => {
   return {};
 };
 
-const keyRemover = makeKeyRemover(['a', 'b']);
+const keyRemover = makeKeyRemover(["a", "b"]);
 
 const keyRemoveObject = keyRemover({ a: 1, b: 2, c: 3 });
 // Now you only have keyRemoveObject.c
-
 /** ################################################################################################################################################################################################# */
 
 /** 7. Deep partial of the object */
@@ -148,12 +148,12 @@ exampleDeepReadonly.a.b = 213;
 /** 10. is in typescript */
 
 type Square = {
-  type: 'square';
+  type: "square";
   size: number;
 };
 
 type Rectangle = {
-  type: 'rectangle';
+  type: "rectangle";
   height: number;
   width: number;
 };
@@ -161,8 +161,8 @@ type Rectangle = {
 type Shape = Square | Rectangle;
 
 const shape: Shape[] = [
-  { type: 'square', size: 2 },
-  { type: 'rectangle', height: 2, width: 2 },
+  { type: "square", size: 2 },
+  { type: "rectangle", height: 2, width: 2 },
 ];
 
 const isSquare = () => true;
@@ -184,38 +184,38 @@ const width = rectangle?.height;
 /** Dynamic function arguments with GENERICS */
 type CustomEvent =
   | {
-      type: 'LOG_IN';
+      type: "LOG_IN";
       payload: {
         userId: string;
       };
     }
   | {
-      type: 'SIGN_OUT';
+      type: "SIGN_OUT";
     };
 
 const sendEvent = () => {};
 /** Correct */
-sendEvent('SIGN_OUT');
-sendEvent('LOG_IN', { userId: '123' });
+sendEvent("SIGN_OUT");
+sendEvent("LOG_IN", { userId: "123" });
 
 /** Incorrect */
-sendEvent('SIGN_OUT', {});
-sendEvent('LOG_IN', { userId: 123 });
-sendEvent('LOG_IN');
+sendEvent("SIGN_OUT", {});
+sendEvent("LOG_IN", { userId: 123 });
+sendEvent("LOG_IN");
 
 /** ################################################################################################################################################################################################# */
 /** 12. Preserving AutoComplete for Literal Unions */
 
 // solution one
-type Padding = 'md' | 'lg' | (string & {});
+type Padding = "md" | "lg" | (string & {});
 // solution two
 type LooseAutocomplete = any;
 
 // Now we will have auto complete
-const padding: Padding = '';
-const padding2: Padding = '8px';
-const padding3: LooseAutocomplete = 'lg';
-const padding4: LooseAutocomplete = '8px';
+const padding: Padding = "";
+const padding2: Padding = "8px";
+const padding3: LooseAutocomplete = "lg";
+const padding4: LooseAutocomplete = "8px";
 
 /** ################################################################################################################################################################################################# */
 
@@ -242,7 +242,7 @@ const nestedFruitCount: NewNestedFruitCount<FruitsCount> = {
 };
 
 /** This will omit keys and bring back to initial */
-type NewXNestedFruitCount = {};
+type NewXNestedFruitCount<TObj> = {};
 
 const nestedXFruitCount: NewXNestedFruitCount<FruitsCount> = {
   apple: 1,
@@ -263,22 +263,21 @@ const singleFruitCount: NewSingleFruitCount<FruitsCount> = {
 /** 14. Use 'in' operator to transform a union to another union */
 type Entity =
   | {
-      type: 'user';
+      type: "user";
     }
   | {
-      type: 'admin';
+      type: "admin";
     }
   | {
-      type: 'superAdmin';
+      type: "superAdmin";
     };
 
 // Goal is to add id to this elements like userId, adminId, superAdminId
-type c = Entity['type'];
 type EntityWithId = {};
 
 const entityWithId: EntityWithId = {
-  type: 'admin',
-  adminId: '121',
+  type: "user",
+  userId: "123",
 };
 
 /** ################################################################################################################################################################################################# */
@@ -315,14 +314,14 @@ Higher difficulty bonus exercise:
 */
 
 interface User {
-  type: 'user';
+  type: "user";
   name: string;
   age: number;
   occupation: string;
 }
 
 interface Admin {
-  type: 'admin';
+  type: "admin";
   name: string;
   age: number;
   role: string;
@@ -332,22 +331,22 @@ export type Person = User | Admin;
 
 export const persons: Person[] = [
   {
-    type: 'user',
-    name: 'Max Mustermann',
+    type: "user",
+    name: "Max Mustermann",
     age: 25,
-    occupation: 'Chimney sweep',
+    occupation: "Chimney sweep",
   },
-  { type: 'admin', name: 'Jane Doe', age: 32, role: 'Administrator' },
-  { type: 'user', name: 'Kate Müller', age: 23, occupation: 'Astronaut' },
-  { type: 'admin', name: 'Bruce Willis', age: 64, role: 'World saver' },
-  { type: 'user', name: 'Wilson', age: 23, occupation: 'Ball' },
-  { type: 'admin', name: 'Agent Smith', age: 23, role: 'Anti-virus engineer' },
+  { type: "admin", name: "Jane Doe", age: 32, role: "Administrator" },
+  { type: "user", name: "Kate Müller", age: 23, occupation: "Astronaut" },
+  { type: "admin", name: "Bruce Willis", age: 64, role: "World saver" },
+  { type: "user", name: "Wilson", age: 23, occupation: "Ball" },
+  { type: "admin", name: "Agent Smith", age: 23, role: "Anti-virus engineer" },
 ];
 
 export function logPerson(person: Person) {
   console.log(
     ` - ${person.name}, ${person.age}, ${
-      person.type === 'admin' ? person.role : person.occupation
+      person.type === "admin" ? person.role : person.occupation
     }`
   );
 }
@@ -356,12 +355,12 @@ export function getObjectKeys(criteria) {}
 
 export function filterPersons(
   persons: Person[],
-  personType: User['type'],
+  personType: User["type"],
   criteria: any
 ): User[];
 export function filterPersons(
   persons: Person[],
-  personType: Admin['type'],
+  personType: Admin["type"],
   criteria: any
 ): Admin[];
 export function filterPersons(
@@ -379,15 +378,15 @@ export function filterPersons(
     });
 }
 
-export const usersOfAge23 = filterPersons(persons, 'user', { age: 23 });
-export const adminsOfAge23 = filterPersons(persons, 'admin', { age: 23 });
+export const usersOfAge23 = filterPersons(persons, "user", { age: 23 });
+export const adminsOfAge23 = filterPersons(persons, "admin", { age: 23 });
 
-console.log('Users of age 23:');
+console.log("Users of age 23:");
 usersOfAge23.forEach(logPerson);
 
 console.log();
 
-console.log('Admins of age 23:');
+console.log("Admins of age 23:");
 adminsOfAge23.forEach(logPerson);
 
 // In case you are stuck:
