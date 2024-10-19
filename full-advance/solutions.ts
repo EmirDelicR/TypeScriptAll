@@ -6,13 +6,27 @@ type State = {
   age: number;
 };
 
-// TODO with MyCapitalize
-type Getters<TObj> = {};
-type Setters<TObj> = {};
+type MyCapitalize<S> = S extends `${infer F}${infer R}`
+  ? `${Uppercase<F>}${R}`
+  : S;
+
+type Getters<TObj> = {
+  [TKey in keyof TObj & string as `get${MyCapitalize<TKey>}`]: () => TObj[TKey];
+};
+type Setters<TObj> = {
+  [TKey in keyof TObj & string as `set${MyCapitalize<TKey>}`]: (
+    value: TObj[TKey]
+  ) => void;
+};
 
 type Store<State> = Setters<State> & Getters<State>;
 
-const person: Store<State> = {};
+const person: Store<State> = {
+  getAge: () => 2,
+  setAge: (value) => {},
+  getName: () => "name",
+  setName: (value) => {},
+};
 
 /** ################################################################################################################################################################################################# */
 // 2. Remove object prefix
@@ -22,9 +36,16 @@ type ApiData = {
   "maps:lat": string;
 };
 
-type RemovePrefixFromObject<TObj> = {};
+type RemoveMaps<S> = S extends `maps:${infer R}` ? R : S;
+
+type RemovePrefixFromObject<TObj> = {
+  [TKey in keyof TObj as RemoveMaps<TKey>]: TObj[TKey];
+};
 // now this will be type {log: string, lat: string}
-const removedMap: RemovePrefixFromObject<ApiData> = {};
+const withoutMaps: RemovePrefixFromObject<ApiData> = {
+  lat: "a",
+  log: "b",
+};
 /** ################################################################################################################################################################################################# */
 /** 3. What does KEYOF mean in TypeScript */
 type PersonKeyofExample = {
@@ -37,10 +58,11 @@ const personKeyofExample = {
   age: 24,
 };
 
-const getData = (data, key) => {
+const getData = <TObj, TKey extends keyof TObj>(data: TObj, key: TKey) => {
   return data[key];
 };
-const getDataType = getData(personKeyofExample, "age");
+
+const typeOfItem = getData(personKeyofExample, "name");
 
 /** 4. Get deepValue of object */
 
@@ -55,7 +77,11 @@ const DeepReturnExample = {
   },
 };
 
-const getDeepValue = <TObj, TKey, TKey1>(
+const getDeepValue = <
+  TObj,
+  TKey extends keyof TObj,
+  TKey1 extends keyof TObj[TKey]
+>(
   data: TObj,
   key1: TKey,
   key2: TKey1
@@ -73,27 +99,80 @@ type ExtractExample = {
   b: boolean;
 };
 
-type ObjectOfKeysStartingWith = {};
-type ValuesOfKeysStartingWith = {};
+type CustomExtract<TObj, StartsWith> = {
+  [TKey in keyof TObj as TKey extends `${StartsWith & string}${string}`
+    ? TKey
+    : never];
+};
+
+type ObjectOfKeysStartingWith<TObj, KeyStartWith extends keyof TObj> = {
+  [TKey in keyof CustomExtract<TObj, KeyStartWith>]: TObj[TKey];
+};
+
+type ValuesOfKeysStartingWith<TObj, KeyStartWith extends keyof TObj> = {
+  [TKey in keyof CustomExtract<TObj, KeyStartWith>]: TObj[TKey];
+}[keyof CustomExtract<TObj, KeyStartWith>];
 
 // {a: string, a1: number}
-type NewExtractedType = ObjectOfKeysStartingWith<ExtractExample, "a", "a">;
+type NewExtractedType = ObjectOfKeysStartingWith<ExtractExample, "a">;
 
 // string | number
-type NewExtractedUnion = ValuesOfKeysStartingWith<ExtractExample, "a", "a1">;
+type NewExtractedUnion = ValuesOfKeysStartingWith<ExtractExample, "a">;
+
+/** 5.1 Extract values of specific key with precision */
+type ObjectOfKeysStartingWithPrecise<
+  TObj,
+  KeyStartWith extends keyof TObj,
+  ExtractedKeys extends keyof CustomExtract<
+    TObj,
+    KeyStartWith
+  > = keyof CustomExtract<TObj, KeyStartWith>
+> = {
+  [TKey in ExtractedKeys]: TObj[TKey];
+};
+
+type ValuesOfKeysStartingWithPrecise<
+  TObj,
+  KeyStartWith extends keyof TObj,
+  ExtractedKeys extends keyof CustomExtract<
+    TObj,
+    KeyStartWith
+  > = keyof CustomExtract<TObj, KeyStartWith>
+> = {
+  [TKey in ExtractedKeys]: TObj[TKey];
+}[ExtractedKeys];
+
+// {a1: number}
+type NewExtractedTypePrecise = ObjectOfKeysStartingWithPrecise<
+  ExtractExample,
+  "a",
+  "a1"
+>;
+
+// number
+type NewExtractedUnionPrecise = ValuesOfKeysStartingWithPrecise<
+  ExtractExample,
+  "a",
+  "a1"
+>;
 
 /** ################################################################################################################################################################################################# */
 /** 6. Remove keys from object */
-
-const makeKeyRemover = (keys: []) => (obj) => {
-  return {};
+type MyOmit<TObj, K> = {
+  [TKey in keyof TObj as TKey extends K ? never : TKey]: TObj[TKey];
 };
+
+const makeKeyRemover =
+  <TKey extends string>(keys: TKey[]) =>
+  <TObj>(obj: TObj) => {
+    return {} as MyOmit<TObj, TKey>;
+  };
 
 const keyRemover = makeKeyRemover(["a", "b"]);
 
 const keyRemoveObject = keyRemover({ a: 1, b: 2, c: 3 });
-// Now you only have keyRemoveObject.c
-keyRemoveObject.c;
+//  Now you only have keyRemoveObject.c
+const rest = keyRemoveObject.c;
 /** ################################################################################################################################################################################################# */
 
 /** 7. Deep partial of the object */
@@ -109,7 +188,9 @@ type DeepPartialExample = {
   };
 };
 
-type DeepPartial<TObj> = {};
+type DeepPartial<TObj> = {
+  [TKey in keyof TObj]?: DeepPartial<TObj[TKey]>;
+};
 
 const x: DeepPartial<DeepPartialExample> = {
   b: {
@@ -126,19 +207,27 @@ type Point = {
   y?: number;
 };
 
-type MappedCustomReadonlyOptional = {};
-type MappedCustomOmitReadonlyOptional = {};
-type MappedCustomOmitOptional = {};
+type MappedCustomReadonlyAndOptional<TObj> = {
+  readonly [TKey in keyof TObj]?: TObj[TKey];
+};
+type MappedCustomNotReadonlyAndOnlyOptional<TObj> = {
+  -readonly [TKey in keyof TObj]?: TObj[TKey];
+};
+type MappedCustomReadonlyAndNotOptional<TObj> = {
+  readonly [TKey in keyof TObj]-?: TObj[TKey];
+};
 // Implementation of mapped type
 
-type Result1 = MappedCustomReadonlyOptional<Point>;
-type Result2 = MappedCustomOmitReadonlyOptional<Point>;
-type Result3 = MappedCustomOmitOptional<Point>;
+type Result1 = MappedCustomReadonlyAndOptional<Point>;
+type Result2 = MappedCustomNotReadonlyAndOnlyOptional<Point>;
+type Result3 = MappedCustomReadonlyAndNotOptional<Point>;
 
 /** ################################################################################################################################################################################################# */
 
 /** 9. DeepReadonly */
-type DeepReadonly = {};
+type DeepReadonly<TObj> = {
+  readonly [TKey in keyof TObj]: DeepReadonly<TObj[TKey]>;
+};
 const exampleDeepReadonly: DeepReadonly<{ a: { b: number } }> = {
   a: { b: 123 },
 };
@@ -166,8 +255,8 @@ const shape: Shape[] = [
   { type: "rectangle", height: 2, width: 2 },
 ];
 
-const isSquare = () => true;
-const isRectangle = () => true;
+const isSquare = (s: Shape): s is Square => true;
+const isRectangle = (s: Shape): s is Rectangle => true;
 // It will cast to proper type
 const square = shape.find(isSquare);
 const size = square?.size;
@@ -194,7 +283,13 @@ type CustomEvent =
       type: "SIGN_OUT";
     };
 
-const sendEvent = () => {};
+const sendEvent = <EventType extends CustomEvent["type"]>(
+  ...args: Extract<CustomEvent, { type: EventType }> extends {
+    payload: infer P;
+  }
+    ? [type: EventType, payload: P]
+    : [type: EventType]
+) => {};
 /** Correct */
 sendEvent("SIGN_OUT");
 sendEvent("LOG_IN", { userId: "123" });
@@ -210,13 +305,13 @@ sendEvent("LOG_IN");
 // solution one
 type Padding = "md" | "lg" | (string & {});
 // solution two
-type LooseAutocomplete = any;
+type LooseAutocomplete<S extends string = "md" | "lg"> = S | Omit<string, S>;
 
 // Now we will have auto complete
 const padding: Padding = "";
 const padding2: Padding = "8px";
 const padding3: LooseAutocomplete = "lg";
-const padding4: LooseAutocomplete = "8px";
+const padding4: LooseAutocomplete = "12px";
 
 /** ################################################################################################################################################################################################# */
 
@@ -229,7 +324,11 @@ const fruitsCount = {
 
 type FruitsCount = typeof fruitsCount;
 
-type NewNestedFruitCount = {};
+type NewNestedFruitCount<TObj> = {
+  [TKey in keyof TObj]: {
+    [TKeyInner in keyof TObj]: TObj[TKeyInner];
+  };
+};
 
 const nestedFruitCount: NewNestedFruitCount<FruitsCount> = {
   apple: {
@@ -243,14 +342,22 @@ const nestedFruitCount: NewNestedFruitCount<FruitsCount> = {
 };
 
 /** This will omit keys and bring back to initial */
-type NewXNestedFruitCount<TObj> = {};
+type NewXNestedFruitCount<TObj> = {
+  [TKey in keyof TObj]: {
+    [TKeyInner in keyof TObj]: TObj[TKeyInner];
+  };
+}[keyof TObj];
 
 const nestedXFruitCount: NewXNestedFruitCount<FruitsCount> = {
   apple: 1,
   banana: 6,
 };
 
-type NewSingleFruitCount<TObj> = {};
+type NewSingleFruitCount<TObj> = {
+  [TKey in keyof TObj]: {
+    [TKeyInner in TKey]: TObj[TKeyInner];
+  };
+}[keyof TObj];
 
 type y = keyof FruitsCount;
 type x = NewSingleFruitCount<FruitsCount>;
@@ -274,7 +381,11 @@ type Entity =
     };
 
 // Goal is to add id to this elements like userId, adminId, superAdminId
-type EntityWithId = {};
+type EntityWithId = {
+  [TKey in Entity["type"]]: {
+    type: TKey;
+  } & Record<`${TKey}Id`, string>;
+}[Entity["type"]];
 
 const entityWithId: EntityWithId = {
   type: "user",
@@ -286,33 +397,33 @@ const entityWithId: EntityWithId = {
 /*** Exercises  */
 
 /* Exercises 1
-
-Intro:
-
-    Filtering requirements have grown. We need to be
-    able to filter any kind of Persons.
-
-Exercise:
-
-    Fix typing for the filterPersons so that it can filter users
-    and return User[] when personType='user' and return Admin[]
-    when personType='admin'. Also filterPersons should accept
-    partial User/Admin type according to the personType.
-    `criteria` argument should behave according to the
-    `personType` argument value. `type` field is not allowed in
-    the `criteria` field.
-
-Higher difficulty bonus exercise:
-
-    Implement a function `getObjectKeys()` which returns more
-    convenient result for any argument given, so that you don't
-    need to cast it.
-
-    let criteriaKeys = Object.keys(criteria) as (keyof User)[];
-    -->
-    let criteriaKeys = getObjectKeys(criteria);
-
-*/
+  
+  Intro:
+  
+      Filtering requirements have grown. We need to be
+      able to filter any kind of Persons.
+  
+  Exercise:
+  
+      Fix typing for the filterPersons so that it can filter users
+      and return User[] when personType='user' and return Admin[]
+      when personType='admin'. Also filterPersons should accept
+      partial User/Admin type according to the personType.
+      `criteria` argument should behave according to the
+      `personType` argument value. `type` field is not allowed in
+      the `criteria` field.
+  
+  Higher difficulty bonus exercise:
+  
+      Implement a function `getObjectKeys()` which returns more
+      convenient result for any argument given, so that you don't
+      need to cast it.
+  
+      let criteriaKeys = Object.keys(criteria) as (keyof User)[];
+      -->
+      let criteriaKeys = getObjectKeys(criteria);
+  
+  */
 
 interface User {
   type: "user";
